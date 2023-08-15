@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+{% block content %}
+    <style>
+        /* Remove bullet point from list */
+        ul.checkbox-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        /* Style the checkboxes */
+        ul.checkbox-list li label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        ul.checkbox-list li input[type="checkbox"] {
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        #store-buttons {
+            display: inline-block;
+            vertical-align: top;
+            margin-left: 10px; /* Add some spacing between dropdowns and buttons */
+        }
+
+        #store-buttons button {
+            margin-right: 5px; /* Add some spacing between buttons */
+        }
+
+    </style>
+    <h1>Edit Product Offerings</h1>
+   
+    <form method="post">
+        {% csrf_token %}
+        <label for="{{ form.store_selection.id_for_label }}">Select a Store:</label>
+        {{ form.store_selection }}   
+        
+        <label for="{{ form.category_selection.id_for_label }}">Select a Category:</label>
+        {{ form.category_selection }}
+    
+        <label for="{{ form.veg_type_selection.id_for_label }}">Select a Veg Type:</label> 
+        {{ form.veg_type_selection }}
+
+        <div id="store-buttons" style="display: none;">
+            <button type="button" id="add-button">Add</button>
+            <button type="button" id="remove-button">Remove</button>
+        </div>
+
+        <ul class="checkbox-list">
+            {% for variety_info in form.variety_info_list %}
+                {% if form.category_selection.value == '' or form.category_selection.value == category %}
+                    {% if form.veg_type_selection.value == '' or form.veg_type_selection.value == veg_type %}
+                    <li data-category="{{ variety_info.category }}" data-veg-type="{{ variety_info.veg_type }}">
+                        <label>
+                            <input type="checkbox" name="{{ form.selected_varieties.name }}" value="{{ variety_info.item_number }}"
+                                        {% if variety_info.item_number in form.selected_varieties.value %}checked{% endif %}>
+                            {{ variety_info.variety }}
+                        </label>
+                    </li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+
+        <input type="submit" value="Save" id="save-button" onclick="handleSaveButtonClick()">
+
+    </form>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Get a reference to the store dropdown element
+            var storeDropdown = $('#id_store_selection'); 
+            // var categoryDropdown = $('#id_category_selection');
+            // var vegTypeDropdown = $('#id_veg_type_selection');
+            var addButton = $('#add-button');
+            var removeButton = $('#remove-button');
+
+            // Attach an event listener to detect changes in the dropdowns
+            $('#id_category_selection').on('change', fetchAndDisplayProducts);
+            $('#id_veg_type_selection').on('change', fetchAndDisplayProducts);
+            
+            storeDropdown.on('change', function() {
+                // Get the selected store value
+                var selected_store = $(this).val();
+                console.log("selected_store", selected_store);
+
+                if (selected_store === '1') { // '1' corresponds to "All Stores"
+                    $('#store-buttons').show();
+                    $('input[type="checkbox"][name="{{ form.selected_varieties.name }}"]').prop('checked', false);
+                } else {
+                    $('#store-buttons').hide();
+                    
+                    // Send an AJAX request to the view
+                    $.ajax({
+                        url: 'edit-products',
+                        type: 'POST',
+                        data: {
+                            'store_id': selected_store,
+                            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                        },
+                        success: function(data) {
+                            var checkboxes = $('input[type="checkbox"][name="{{ form.selected_varieties.name }}"]');
+                            checkboxes.prop('checked', false);  // Uncheck all checkboxes
+                            
+                            // Check the checkboxes based on the response data
+                            $.each(data.available_varieties, function(index, variety) {
+                                console.log("variety", variety);
+                                checkboxes.filter('[value="' + variety + '"]').prop('checked', true);
+                            });
+
+        
+                        }
+                    });
+                }
+            });
+
+
+            // Trigger a change event on the store dropdown so the add/remove buttons are displayed when the page loads
+            storeDropdown.trigger('change');
+
+            //});
+            //$('form').on('submit', handleSaveButtonClick);
+            $('#save-button').on('click', handleSaveButtonClick);
+            
+            addButton.on('click', addToAllStores); 
+            removeButton.on('click', removeFromAllStores);
+            
+        });
+
+        function handleSaveButtonClick() {
+            event.preventDefault();
+            var storeDropdown = $('#id_store_selection');
+            var availabilityData = {};
+
+            $('input[type="checkbox"][name="{{ form.selected_varieties.name }}"]').each(function() {
+                var value = $(this).val();
+                var isChecked = $(this).is(':checked');
+                availabilityData[value] = isChecked;
+            });
+            console.log('mother fucker');
+
+            $.ajax({
+                url: 'edit-products',
+                type: 'POST',
+                data: {
+                    'store_handle': $('#id_store_selection').val(),
+                    'varieties': JSON.stringify(availabilityData),
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function(data) {
+                    console.log("fuck balls");
+                    // Handle the response from the server (if needed)
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+
+            });
+        }
+
+        function fetchAndDisplayProducts() {
+            var selectedCategory = $('#id_category_selection').val().toLowerCase();
+            var selectedVegType = $('#id_veg_type_selection').val().toLowerCase();
+            
+            console.log("selectedCategory", selectedCategory)
+            console.log("selectedVegType", selectedVegType)
+
+            $('ul.checkbox-list li').each(function() {
+                var item = $(this);
+                var category = item.data('category').toLowerCase();
+                var vegType = item.data('veg-type').toLowerCase();
+                
+                console.log("category", category)
+                console.log("vegType", vegType)
+                
+                if (selectedCategory === 'all' || selectedCategory === category) {
+                    if (selectedVegType === 'all' || selectedVegType === vegType) {    
+                        item.show();
+                    } else {
+                        item.hide();
+                    }
+                } else {
+                    item.hide();
+                }
+            });
+        }
+
+        function addToAllStores() {
+            //send a post request to the view with the varieties that are checked
+            var selectedVarieties = [];
+
+            // Iterate through the checked checkboxes and collect the values
+            $('input[type="checkbox"][name="{{ form.selected_varieties.name }}"]:checked').each(function() {
+                selectedVarieties.push($(this).val());
+            });
+           
+            //console.log("selectedVarieties in addToAllStores", selectedVarieties)
+            var addData = {
+                'varieties_to_add': JSON.stringify(selectedVarieties),
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+            };
+            // Perform a POST request to the backend with the selected varieties
+            $.ajax({
+                url: 'edit-products', // Replace with the actual URL of your backend view
+                type: 'POST',
+                data: addData,
+                success: function(data) {
+                    // Handle the response from the server (if needed)
+                    console.log('Selected varieties added:', data);
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+
+        }
+
+        function removeFromAllStores() {
+            //send a post request to the view with the varieties that are checked
+            var selectedVarieties = [];
+
+            // Iterate through the checked checkboxes and collect the values
+            $('input[type="checkbox"][name="{{ form.selected_varieties.name }}"]:checked').each(function() {
+                selectedVarieties.push($(this).val());
+            });
+            var removeData = {
+                'varieties_to_remove': JSON.stringify(selectedVarieties),
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+            };
+            // Perform a POST request to the backend with the selected varieties
+            $.ajax({
+                url: 'edit-products', // Replace with the actual URL of your backend view
+                type: 'POST',
+                data: removeData,
+                success: function(data) {
+                    // Handle the response from the server (if needed)
+                    console.log('Selected varieties removed:', data);
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+
+        }
+
+
+    </script>
+
+{% endblock %}
+    

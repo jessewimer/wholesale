@@ -20,7 +20,7 @@ django.setup()
 from stores.models import Store
 
 def import_data():
-    csv_file = "C:/Users/ndefe/OneDrive/Desktop/stores.csv"
+    csv_file = "C:/Users/ndefe/OneDrive/Desktop/alberta.csv"
     encoding = 'utf-8'
     df = pd.read_csv(csv_file, encoding=encoding)  # Read the CSV file using pandas
 
@@ -50,7 +50,7 @@ def import_data():
 
     print("List of stores:")
     for store in stores:
-        print(f"{store.store_number} - {store.name} - {store.slots} - {store.email} - {store.total_num_packets} - {store.total_orders}")
+        print(f"{store.pk} - {store.store_number} - {store.name} - {store.slots} - {store.email} - {store.total_num_packets} - {store.total_orders}")
 
-# Call the import_data function
+# Main function / execution starts here
 import_data()

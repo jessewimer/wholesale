@@ -1,29 +1,551 @@
 <!DOCTYPE html>
+{% load static %}
+
 <html>
 <head>
-    <title>Dashboard</title>
-    <!-- Add your CSS and other head elements here -->
+    <meta charset="UTF-8">
+    <style>
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px; /* Optional margin for spacing */
+        }
+
+        .heading {
+            font-size: 36px;
+            margin-left: 34px;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .clear-button {
+            font-size: 16px;
+            padding: 10px 20px;
+            background-color: rgb(225, 171, 127);
+            color: black;
+            border: black 1px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .submit-button {
+            font-size: 16px;
+            padding: 10px 20px;
+            background-color: rgb(237, 237, 89);
+            color: black;
+            border: black 1px;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-right: 34px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .submit-button:active {
+        /* Define the styles for the active state */
+            background-color: #ff0000;  
+            color: #ffffff;            
+        }
+     
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+      
+        .product-table th, .product-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+      
+        .product-table th {
+            background-color: #f2f2f2;
+        }
+      
+        .product-table .even {
+            background-color: #f9f9f9;
+        }
+        
+        .product-table .description {
+            text-align: left;
+        }
+        
+        .input-field {
+            width: 10%;
+            text-align: center;
+        }
+
+        .input-field input {
+            width: 50%; /* Adjust the width of the input box within the column */
+            text-align: center;
+        }
+
+        .filter-column {
+            text-align: center;
+        }
+
+        /* CSS for the image modal */
+        .modal {
+            /* display: none; */
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            max-width: 80%;
+            max-height: 80%;
+            text-align: center;
+        }
+
+        .modal-content img {
+            max-width: 100%; 
+            max-height: 100%;
+            object-fit: contain; 
+            /* height: auto; Maintain the original aspect ratio of the image */
+            display: block; /* Ensure proper rendering of inline-block elements */
+        }
+
+        /* CSS for the close button */
+        .close {
+            /* make bold */
+            font-weight: bold;
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            cursor: pointer;
+        }
+        /* END CSS for the image modal*/
+
+
+        /* CSS for the modal overlay for order for submission review */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+        }
+
+        /* CSS for the modal content */
+        .submit-modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        /* CSS for the close button */
+        .submit-modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+    </style>
+
 </head>
+
 <body>
-    <header>
-        <div class="banner">
-            <div class="customer-name">
-                <!-- Display the customer's name here -->
-                {{ store_name }}
-            </div>
-            <div class="actions">
-                <button class="place-order-button">Place Order</button>
-                <div class="menu-icon">
-                    <!-- Add your menu icon here -->
-                    <!-- You can use an icon library like Font Awesome or Material Icons -->
-                </div>
-            </div>
+    <div class="header-container">
+        <h1 class="heading">{{ store.name }}</h1>
+        <div class="button-container">
+            <button class="clear-button" type="submit" onclick=showVerifyClearOrderModal()>Clear Order</button> 
+            <button class="submit-button" type="submit" onclick=displayModal()>Submit Order</button>
         </div>
-    </header>
+    </div>
 
-    <!-- Add the rest of your dashboard content here -->
+    <form id="order-form" method="POST">
+        {% csrf_token %}
+        <table class="product-table", id="product-table">
+            <tr>
+                <th class="input-field">Quantity</th>
+                <th>Notes</th>
+                <th class="filter-column">
+                    <!-- Category -->
+                    <div class="filter-dropdown">
+                    <select id="category-filter" style="text-align: center; font-weight: bold;">
+                        <option value="">All</option>
+                        <option value="vegetables">Vegetables</option>
+                        <option value="herbs">Herbs</option>
+                        <option value="flowers">Flowers</option>
+                    </select>
+                    </div>
+                </th>
+                <!-- <th>Category</th> -->
+                <th>Veg Type</th>
+                <th>Sub Type</th>
+                <th>Variety</th>
+                <th class="description">Description</th>
+                <th class="photo">Photo</th>
+            </tr>
+        
+        {% for product in products %}
+            <tr class="{% cycle 'even' 'odd' %}">
+                <td class="input-field"><input type="number" name="quantity" min="0", step="5" value="0" item-number="{{ product.item_number }}" tabindex="{{ forloop.counter }}"></td>
+                <td>{{ product.notes }}</td>
+                <td>{{ product.category }}</td>
+                <td>{{ product.veg_type }}</td>
+                <td>{{ product.sub_type }}</td>
+                <td>{{ product.variety }}</td>
+                <td class="description">{{ product.description }}</td>
+                <td>
+                    <a href="#" onclick="showImage('{% static product.photo %}')">
+                        View Photo
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
 
-    <!-- Add your scripts and other body elements here -->
+    </form>
+
+    <!-- Modal for reviewing the order before submission -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="submit-modal-content">
+            <span class="submit-modal-close" onclick="closeModal()">&times;</span>
+            <p>Order Total: $<span id="orderTotal"></span></p>
+            <p>If submitted, a bill will be mailed separately</p>
+            <button id="modalSubmitButton" class="modal-submit-button">Submit</button>
+            <button id="modalCloseButton" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Modal for order submission success message -->
+    <div class="modal-overlay" id="successModalOverlay">
+        <div class="submit-modal-content">
+            <span class="submit-modal-close" onclick="closeModal()">&times;</span>
+            <h2>Order Submitted Successfully</h2>
+            <p>Your order will be shipped within 2 business days.</p>
+        </div>
+    </div>
+
+    <!-- Modal for clear order verification -->
+    <div class="modal-overlay" id="verifyClearOrder">
+        <div class="submit-modal-content">
+            <span class="submit-modal-close" onclick="closeModal()">&times;</span>
+            <h2>Clear Order</h2>
+            <p>Are you sure you want to clear your order?</p>
+            <button id="submitClearOrder" class="modal-submit-button">Yes</button>
+            <button id="clearOrderCloseButton" onclick="closeModal()">No</button>
+        </div>
+    </div>
+
+    
+    <script>
+        
+        var orderData = {};
+
+        function showVerifyClearOrderModal() {
+            // Show the modal
+            var modal = document.getElementById('verifyClearOrder');
+            modal.style.display = 'block';
+            
+            // Add an event listener to the "Submit" button inside the modal
+            var clearOrderSubmit= document.getElementById('submitClearOrder');
+            clearOrderSubmit.addEventListener('click', clearOrder);
+        }
+
+        function handleSubmitButtonClick() {
+            submitOrder(orderData);
+            closeModal();
+            clearOrder();
+            // orderData = {}; // Reset orderData after submission
+            
+            // Show the success modal
+            var successModal = document.getElementById('successModalOverlay');
+            successModal.style.display = 'block';
+
+            // Remove the event listener to prevent it from firing again
+            var submitButtonModal = document.getElementById('modalSubmitButton');
+            submitButtonModal.removeEventListener('click', handleSubmitButtonClick);
+        }
+
+
+        function displayModal() {
+            //gather order data and calculate order total
+            var table = document.getElementById('product-table');
+            var rows = table.getElementsByTagName('tr');
+
+            for (var i = 1; i < rows.length; i++) {  // Start from index 1 to skip the header row
+                var row = rows[i];
+                var itemNumber = row.querySelector('input').getAttribute('item-number');
+                var quantity = parseInt(row.querySelector('input').value);
+
+                if (quantity > 0) {
+                    console.log(itemNumber, quantity);
+                    orderData[itemNumber] = quantity;
+                }
+            }
+            
+            // Calculate the order total
+            var total = 0;
+            for (var itemNumber in orderData) {
+                total += orderData[itemNumber];
+            }
+            var orderTotal = total * 2.05;
+
+            // Display the order total in the modal
+            document.getElementById('orderTotal').textContent = orderTotal.toFixed(2); 
+
+            // Show the modal
+            var modal = document.getElementById('modalOverlay');
+            modal.style.display = 'block';
+            
+            // Add an event listener to the "Submit" button inside the modal
+            var submitButtonModal = document.getElementById('modalSubmitButton');
+            submitButtonModal.addEventListener('click', handleSubmitButtonClick);
+        }
+
+
+        function closeModal() {
+            var modal = document.getElementById('modalOverlay');
+            modal.style.display = 'none';
+            orderData = {};
+            var modal = document.getElementById('successModalOverlay');
+            modal.style.display = 'none';
+            var modal = document.getElementById('verifyClearOrder');
+            modal.style.display = 'none';
+        }
+
+
+        function submitOrder(submittedData) {
+           
+            console.log(submittedData);
+            //need to send orderData to server
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/accounts/dashboard/', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
+            xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+            xhr.onload = function () {
+                // Request successful
+                if (xhr.status === 200) {
+                    
+                    console.log('order submitted successfully');
+                // Request failed 
+                } else {
+                    console.error('Error: ' + xhr.status);
+                    showErrorMessage('There was a problem submitting your order. Please try again.');
+                    return;
+                }
+            };
+
+            xhr.send(JSON.stringify(submittedData));
+            
+            // Display modal
+            var modal = document.getElementById('successModalOverlay');
+            modal.style.display = 'block';
+        }
+
+
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    // Check if the cookie name matches
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        // Get the cookie value
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+
+        // Function to sort the table rows by category, veg_type, and sub_type
+        function sortTable() {
+            var table = document.getElementById("product-table");
+            var rows = table.getElementsByTagName("tr");
+            
+            // Convert rows to an array for sorting
+            var rowsArray = Array.prototype.slice.call(rows, 1); // Exclude header row
+            
+            // Sort the rows based on category, veg_type, and sub_type
+            rowsArray.sort(function(row1, row2) {
+                var category1 = row1.cells[2].textContent;
+                var category2 = row2.cells[2].textContent;
+                var vegType1 = row1.cells[3].textContent;
+                var vegType2 = row2.cells[3].textContent;
+                var subType1 = row1.cells[4].textContent;
+                var subType2 = row2.cells[4].textContent;
+                
+                if (category1 !== category2) {
+                    return category1.localeCompare(category2);
+                }
+                if (vegType1 !== vegType2) {
+                    return vegType1.localeCompare(vegType2);
+                }
+                return subType1.localeCompare(subType2);
+            });
+            
+            // Reorder the table rows based on the sorted array
+            for (var i = 0; i < rowsArray.length; i++) {
+                table.appendChild(rowsArray[i]);
+            }
+        }
+        
+        // Call the sortTable function when the page loads
+        window.onload = function() {
+            sortTable();
+        };
+
+
+        function showImage(photoLink) {
+            // Create the modal container
+            const modalContainer = document.createElement('div');
+            modalContainer.classList.add('modal');
+
+            const modalContent = document.createElement('div');
+            modalContent.classList.add('modal-content');
+           
+             // Create the close button
+            const closeButton = document.createElement('span');
+            closeButton.classList.add('close');
+            closeButton.textContent = 'X';
+
+            // Create the image element
+            const img = document.createElement('img');
+            img.src = photoLink;
+            img.alt = 'Product Photo';
+
+            // Append elements to the modal content
+            modalContent.appendChild(closeButton);
+            modalContent.appendChild(img);
+
+            // Append the modal content to the modal container
+            modalContainer.appendChild(modalContent);
+
+            // Append the modal container to the document body
+            document.body.appendChild(modalContainer);
+
+            // Add an event listener to close the modal when the close button is clicked
+            closeButton.addEventListener('click', function () {
+                modalContainer.style.display = 'none';
+            });
+
+            // Resize the image once it's loaded
+            img.addEventListener('load', function () {
+                // resizeImage();
+                resizeImage()
+            });
+
+            function resizeImage() {
+                const maxHeight = modalContent.clientHeight - 40; // Subtract any padding or margins applied to the modal content
+                const maxWidth = modalContent.clientWidth - 40;
+                const aspectRatio = img.naturalWidth / img.naturalHeight;
+
+                if (img.naturalWidth > maxWidth || img.naturalHeight > maxHeight) {
+                    if (aspectRatio > 1) {
+                    img.style.width = `${maxWidth}px`;
+                    img.style.height = 'auto';
+                    } else {
+                    img.style.width = 'auto';
+                    img.style.height = `${maxHeight}px`;
+                    }
+                }
+            }
+        }
+
+        
+        // Function to filter the table rows based on the selected category
+        function filterTable() {
+            const categoryFilter = document.getElementById('category-filter');
+            const selectedCategory = categoryFilter.value.toLowerCase();
+
+            const table = document.getElementById('product-table');
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) { // Start from index 1 to skip the header row
+                const row = rows[i];
+                const categoryCell = row.cells[2].textContent.toLowerCase(); // Index 2 is the category column in the table
+
+                if (selectedCategory === '' || categoryCell === selectedCategory || selectedCategory === 'all') {
+                    row.style.display = 'table-row';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
+        // Add an event listener to the drop-down menu to trigger filtering when the value changes
+        document.getElementById('category-filter').addEventListener('change', filterTable);
+        
+
+        // Function to round a number to the nearest multiple of 5
+        function roundToNearestMultipleOfFive(value) {
+            return Math.round(value / 5) * 5;
+        }
+
+
+        // Function to handle input in the input field and round the value when focus is lost (blur event)
+        function handleInput(event) {
+            const input = event.target;
+            // Check if the Enter key is pressed or if the input field loses focus
+            if (event.type === 'keydown' && event.key === 'Enter' || event.type === 'blur') {
+                const originalValue = parseInt(input.value, 10);
+
+                // Check if the input is a valid number
+                if (!isNaN(originalValue)) {
+                    // Round the value to the nearest multiple of 5
+                    const roundedValue = roundToNearestMultipleOfFive(originalValue);
+
+                    // Update the input field value with the rounded value
+                    input.value = roundedValue;
+                }
+            }
+        }
+
+
+    // Function to clear the order form
+        function clearOrder() {
+            const inputFields = document.querySelectorAll('.input-field input');
+            inputFields.forEach((input) => {
+                input.value = 0;
+            });
+            // call closeModal function
+            closeModal();
+        }
+
+
+    // Event listeners to the input fields for manual input, Enter key press, and focus loss (blur)
+    const inputFields = document.querySelectorAll('.input-field input');
+    inputFields.forEach((input) => {
+        input.addEventListener('input', handleInput); // Add the input event listener for manual input
+        input.addEventListener('keydown', handleInput); // Add the keydown event listener to handle Enter key press
+        input.addEventListener('blur', handleInput); // Add the blur event listener to handle focus loss
+    });
+
+    </script>
+
 </body>
 </html>
 

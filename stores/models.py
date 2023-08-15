@@ -1,8 +1,15 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
+
+from django.contrib.auth.models import AbstractUser
+from django.db import models
 
 class Store(models.Model):
+    store_user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     store_number = models.IntegerField(null=True)
+    password = models.CharField(max_length=100, null=True)
+    username = models.CharField(max_length=100, null=True)
     name = models.CharField(max_length=100, null=True)
     email = models.EmailField(null=True)
     slots = models.IntegerField(null=True)

@@ -19,11 +19,27 @@ from products.models import Product
 
 def print_varieties():
     varieties = Product.objects.values_list('variety', flat=True).distinct()
-
+    primary_keys = Product.objects.values_list('pk', flat=True).distinct()
+    i = 0
     print("List of Varieties:")
     for variety in varieties:
-        print(variety)
+        print(primary_keys[i], variety)
+        i += 1
 
-# Call the function to print the list of varieties
-print_varieties()
+# Function to print the list of varieties and their various attributes
+def print_database():
+    products = Product.objects.all()
+    for product in products:
+        # Can set the price of the product here
+        #product.price = 2.05
+        
+        # if product.sub_type == "nan":
+        #     product.sub_type = ""
+        # product.save()
+        print(product.item_number, product.variety)
+        
+        # print(product.pk, product.variety, product.sub_type, product.price, product.photo)    
+
+#print_varieties()
+print_database()
 

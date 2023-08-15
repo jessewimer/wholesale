@@ -17,20 +17,21 @@ from django.contrib import admin
 from django.urls import path, include
 from stores.views import login, dashboard
 from django.shortcuts import redirect
+from products import views as product_views
+from stores import views as store_views
 
 urlpatterns = [
+    
+    path('admin/edit-products', product_views.edit_product_availabilities, name='admin_product_list'),
     path('admin/', admin.site.urls),
-    path('', include('stores.urls')),
     
-    path('', lambda request: redirect('login/', permanent=False)),
-    
-    
-    
-    #path('dashboard/', dashboard, name='dashboard'),
-    # path('', login, name='login')
-    # path('dashboard/', dashboard, name='login')
+    path('accounts/', include('stores.urls')), 
+    #path('stores/', include('stores.urls')),
 
-    #path("stores/", include('stores.urls')),
-    #path("login/", include('django.contrib.auth.urls')), 
-    #path("dashboard/", store_views.dashboard, name="dashboard"),
+    #path('accounts/', include(('django.contrib.auth.urls','accounts'), namespace='accounts')),
+
+    #path('accounts/', include(('django.contrib.auth.urls', 'accounts'), namespace='accounts')),
+    #path('accounts/profile/', store_views.dashboard, name='profile'),  
+    #path('', lambda request: redirect('login/', permanent=False)),
 ]
+
