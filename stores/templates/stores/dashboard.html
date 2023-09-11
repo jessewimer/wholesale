@@ -5,59 +5,89 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        .header-container {
+        /* .header-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px; /* Optional margin for spacing */
+            margin-bottom: 20px; 
+            background-color: rgb(113, 147, 109);
+
+        } */
+
+        .header-container {
+            position: sticky;
+            top: 0;
+            display: flex;
+            height: 107px;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgb(113, 147, 109);
+            z-index: 100; /* Ensure it's above other elements */
+            margin-bottom: -1px;
         }
 
         .heading {
-            font-size: 36px;
+            font-size: 32px;
             margin-left: 34px;
         }
 
         .button-container {
             display: flex;
-            gap: 20px;
+            gap: 15px;
+            align-items: center;
+            margin-right: 20px;
         }
 
-        .clear-button {
-            font-size: 16px;
-            padding: 10px 20px;
-            background-color: rgb(225, 171, 127);
-            color: black;
-            border: black 1px;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
+        .clear-button,
         .submit-button {
-            font-size: 16px;
+            width: 120px;
+            height: 40px; 
+            font-size: 18px;
             padding: 10px 20px;
-            background-color: rgb(237, 237, 89);
             color: black;
-            border: black 1px;
-            border-radius: 5px;
-            font-size: 16px;
-            margin-right: 34px;
             font-weight: bold;
+            border: none;
+            border-radius: 7px;
             cursor: pointer;
+            text-decoration: none;
+            background-color: rgb(198, 198, 190);
+            transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
+            box-sizing: border-box; 
         }
 
-        .submit-button:active {
-        /* Define the styles for the active state */
-            background-color: #ff0000;  
-            color: #ffffff;            
+        .logout-button {
+            width: 100px;
+            height: 50px;
+            display: inline-block; /* Display as an inline block */
+            font-size: 18px;
+            padding: 10px 20px;
+            background-color: rgb(198, 198, 190);
+            color: rgb(6, 6, 6);
+            border: none;
+            border-radius: 7px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
         }
-     
+
+        .clear-button:hover,
+        .submit-button:hover,
+        .logout-button:hover {
+            background-color: rgb(144, 145, 126);
+            color: black;
+        }
+
         .product-table {
             width: 100%;
             border-collapse: collapse;
         }
       
+        .table-container {
+            max-height: 630px;
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+
         .product-table th, .product-table td {
             padding: 10px;
             border-bottom: 1px solid #ddd;
@@ -65,11 +95,48 @@
         }
       
         .product-table th {
-            background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
+            background-color: #cfd6d1;
+            font-weight: bold;
+            font-size: 20px;
+            /* border-bottom: 4px solid black; 
+            ----couldnt get the bottom border to work with sticky header, kept disappearing when scrolling down----
+            */
+            z-index: 99;
+            height: 30px;
+            font-family: Arial, sans-serif; 
         }
       
-        .product-table .even {
-            background-color: #f9f9f9;
+
+        .custom-select {
+            font-size: 18px; /* Default font size for dropdown */
+            font-weight: bold;
+            text-align: center;
+            font-family: Arial, sans-serif; 
+        }
+
+        .custom-select option:checked {
+            font-weight: bold;
+            font-size: 18px; /* Adjust the font size as needed */
+        }
+        /* .filter-dropdown option {
+            font-size: 18px; 
+        }
+
+        .filter-dropdown option:checked {
+            font-weight: bold;
+            font-size: 20px; 
+        } */
+
+        .product-table td {
+            background-color: #f2f2f2;
+            font-size: 17px;
+            padding: 10px;
+        }
+
+        .product-table .even td {
+            background-color: #eae6e6;
         }
         
         .product-table .description {
@@ -92,7 +159,6 @@
 
         /* CSS for the image modal */
         .modal {
-            /* display: none; */
             position: fixed;
             z-index: 9999;
             left: 0;
@@ -173,15 +239,17 @@
 
 <body>
     <div class="header-container">
-        <h1 class="heading">{{ store.name }}</h1>
+        <h1 class="heading">Uprising Seeds Wholesale Order Form -- {{ store.name }}</h1>
         <div class="button-container">
-            <button class="clear-button" type="submit" onclick=showVerifyClearOrderModal()>Clear Order</button> 
-            <button class="submit-button" type="submit" onclick=displayModal()>Submit Order</button>
+            <button class="clear-button" onclick=showVerifyClearOrderModal()>Clear</button> 
+            <button class="submit-button" onclick=displayModal()>Submit</button>
+            <button class="logout-button" id="logout-button">Logout</button>
         </div>
     </div>
 
     <form id="order-form" method="POST">
         {% csrf_token %}
+        <div class="table-container">
         <table class="product-table", id="product-table">
             <tr>
                 <th class="input-field">Quantity</th>
@@ -189,22 +257,30 @@
                 <th class="filter-column">
                     <!-- Category -->
                     <div class="filter-dropdown">
-                    <select id="category-filter" style="text-align: center; font-weight: bold;">
+
+                    <select id="category-filter" class="filter-dropdown custom-select" size="1">
                         <option value="">All</option>
                         <option value="vegetables">Vegetables</option>
                         <option value="herbs">Herbs</option>
                         <option value="flowers">Flowers</option>
                     </select>
+                            
+                    <!-- <select id="category-filter" class="filter-dropdown" text-align: center; font-weight: bold;">
+                        <option value="" style="font-weight: bold; font-size: 17px;">All</option>
+                        <option value="vegetables" style="font-weight: bold; font-size: 17px;">Vegetables</option>
+                        <option value="herbs" style="font-weight: bold; font-size: 17px;">Herbs</option>
+                        <option value="flowers" style="font-weight: bold; font-size: 17px;">Flowers</option>
+                    </select> -->
                     </div>
                 </th>
                 <!-- <th>Category</th> -->
-                <th>Veg Type</th>
+                <th>Type</th>
                 <th>Sub Type</th>
                 <th>Variety</th>
                 <th class="description">Description</th>
                 <th class="photo">Photo</th>
             </tr>
-        
+        </div>
         {% for product in products %}
             <tr class="{% cycle 'even' 'odd' %}">
                 <td class="input-field"><input type="number" name="quantity" min="0", step="5" value="0" item-number="{{ product.item_number }}" tabindex="{{ forloop.counter }}"></td>
@@ -231,8 +307,8 @@
             <span class="submit-modal-close" onclick="closeModal()">&times;</span>
             <p>Order Total: $<span id="orderTotal"></span></p>
             <p>If submitted, a bill will be mailed separately</p>
-            <button id="modalSubmitButton" class="modal-submit-button">Submit</button>
-            <button id="modalCloseButton" onclick="closeModal()">Cancel</button>
+            <button id="modalSubmitButton" type="button" class="modal-submit-button">Submit</button>
+            <button id="modalCloseButton" type="button" onclick="closeModal()">Cancel</button>
         </div>
     </div>
 
@@ -251,8 +327,8 @@
             <span class="submit-modal-close" onclick="closeModal()">&times;</span>
             <h2>Clear Order</h2>
             <p>Are you sure you want to clear your order?</p>
-            <button id="submitClearOrder" class="modal-submit-button">Yes</button>
-            <button id="clearOrderCloseButton" onclick="closeModal()">No</button>
+            <button id="submitClearOrder" type="button" class="modal-submit-button">Yes</button>
+            <button id="clearOrderCloseButton" type="button" onclick="closeModal()">No</button>
         </div>
     </div>
 
@@ -262,6 +338,7 @@
         var orderData = {};
 
         function showVerifyClearOrderModal() {
+            //console.log('inside showVerifyClearOrderModal function');
             // Show the modal
             var modal = document.getElementById('verifyClearOrder');
             modal.style.display = 'block';
@@ -269,13 +346,14 @@
             // Add an event listener to the "Submit" button inside the modal
             var clearOrderSubmit= document.getElementById('submitClearOrder');
             clearOrderSubmit.addEventListener('click', clearOrder);
+
         }
 
         function handleSubmitButtonClick() {
             submitOrder(orderData);
             closeModal();
             clearOrder();
-            // orderData = {}; // Reset orderData after submission
+            
             
             // Show the success modal
             var successModal = document.getElementById('successModalOverlay');
@@ -286,7 +364,7 @@
             submitButtonModal.removeEventListener('click', handleSubmitButtonClick);
         }
 
-
+        // This function is called when the user clicks the "Submit Order" button on the main page
         function displayModal() {
             //gather order data and calculate order total
             var table = document.getElementById('product-table');
@@ -324,6 +402,7 @@
 
 
         function closeModal() {
+            //console.log('inside closeModal function');
             var modal = document.getElementById('modalOverlay');
             modal.style.display = 'none';
             orderData = {};
@@ -335,11 +414,18 @@
 
 
         function submitOrder(submittedData) {
-           
-            console.log(submittedData);
+            //need to change /account/dashboard to accounts/{store name}
+            //get the store name
+            var storeName = '{{ store.username }}';
+            console.log(storeName);
+            var url = '/accounts/' + storeName + '/';
+
+
+
+            //console.log(submittedData);
             //need to send orderData to server
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', '/accounts/dashboard/', true);
+            xhr.open('POST', url, true);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
             xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
@@ -508,6 +594,7 @@
 
         // Function to handle input in the input field and round the value when focus is lost (blur event)
         function handleInput(event) {
+            //console.log('inside handleInput function');
             const input = event.target;
             // Check if the Enter key is pressed or if the input field loses focus
             if (event.type === 'keydown' && event.key === 'Enter' || event.type === 'blur') {
@@ -525,8 +612,10 @@
         }
 
 
-    // Function to clear the order form
+        // Function to clear the order form
         function clearOrder() {
+            orderData = {};
+            //console.log('inside clearOrder function');
             const inputFields = document.querySelectorAll('.input-field input');
             inputFields.forEach((input) => {
                 input.value = 0;
@@ -535,6 +624,53 @@
             closeModal();
         }
 
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded');
+            var logoutButton = document.getElementById('logout-button');
+            var logoutUrl = '{% url "logout" %}';
+            //console.log(logoutUrl);
+            logoutButton.setAttribute('data-logout-url', logoutUrl);
+            logoutButton.addEventListener('click', function() {
+                console.log('logout clicked');
+                logout();
+            });
+            
+        });
+
+        function logout() {
+            //console.log('inside logout function');
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '{% url "logout" %}', true); // Update the URL as needed
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    // Successfully logged out
+                    window.location.href = '{% url "login" %}'; // Redirect to the login page
+                } else {
+                    console.error('Error: ' + xhr.status);
+                    // Handle error
+                }
+            };
+
+            xhr.send();
+        }
+
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
 
     // Event listeners to the input fields for manual input, Enter key press, and focus loss (blur)
     const inputFields = document.querySelectorAll('.input-field input');
@@ -543,6 +679,7 @@
         input.addEventListener('keydown', handleInput); // Add the keydown event listener to handle Enter key press
         input.addEventListener('blur', handleInput); // Add the blur event listener to handle focus loss
     });
+
 
     </script>
 

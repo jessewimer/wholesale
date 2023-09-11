@@ -9,14 +9,11 @@ class Product(models.Model):
     super_type = models.CharField(max_length=25, null=True)
     veg_type = models.CharField(max_length=25, null=True)
     sub_type = models.CharField(max_length=25, null=True)
-    variety = models.CharField(max_length=25, null=True)
+    variety = models.CharField(max_length=30, null=True)
     description = models.TextField(null=True)
     quickbooks_code = models.CharField(max_length=50, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     photo = models.CharField(max_length=100, null=True)
-
-    # Need to load static images for each product into products/static/products directory
-    #photo = models.ImageField(upload_to='product_photos/', blank=True, null=True)
 
     def __str__(self):
         return self.variety
@@ -26,3 +23,6 @@ class Product(models.Model):
         for product in cls.objects.all():
             product.set_price(price)
 
+    def print_products(cls):
+        for product in cls.objects.all():
+            print(f'Item Number: {product.item_number} -- {product.variety}')

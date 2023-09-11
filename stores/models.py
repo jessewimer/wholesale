@@ -44,3 +44,8 @@ class Store(models.Model):
 
     def __str__(self):
         return self.name
+
+    def print_store_ids():
+        stores = Store.objects.order_by('id')
+        for store in stores:
+            print(f"Key: {store.id}, Name: {store.name}")

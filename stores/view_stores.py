@@ -23,7 +23,6 @@ def resetTotalOrdersAll():
     for store in stores:
         store.total_orders = 00
         store.save()
-        #print(store.store_number, store.name, store.email, store.slots, store.last_order_date, store.total_orders, store.current_order, store.total_num_packets)
 
 # Call the function
 resetTotalOrdersAll()

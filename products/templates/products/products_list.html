@@ -22,11 +22,11 @@
         #store-buttons {
             display: inline-block;
             vertical-align: top;
-            margin-left: 10px; /* Add some spacing between dropdowns and buttons */
+            margin-left: 10px; /* spacing between dropdowns and buttons */
         }
 
         #store-buttons button {
-            margin-right: 5px; /* Add some spacing between buttons */
+            margin-right: 5px; /* spacing between buttons */
         }
 
     </style>
@@ -71,14 +71,12 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Get a reference to the store dropdown element
+            // getting references to the dropdowns and buttons
             var storeDropdown = $('#id_store_selection'); 
-            // var categoryDropdown = $('#id_category_selection');
-            // var vegTypeDropdown = $('#id_veg_type_selection');
             var addButton = $('#add-button');
             var removeButton = $('#remove-button');
 
-            // Attach an event listener to detect changes in the dropdowns
+            // Attach an event listener to detect changes in the category/veg_type dropdowns
             $('#id_category_selection').on('change', fetchAndDisplayProducts);
             $('#id_veg_type_selection').on('change', fetchAndDisplayProducts);
             
@@ -117,17 +115,13 @@
                 }
             });
 
-
             // Trigger a change event on the store dropdown so the add/remove buttons are displayed when the page loads
             storeDropdown.trigger('change');
 
-            //});
-            //$('form').on('submit', handleSaveButtonClick);
             $('#save-button').on('click', handleSaveButtonClick);
             
             addButton.on('click', addToAllStores); 
             removeButton.on('click', removeFromAllStores);
-            
         });
 
         function handleSaveButtonClick() {
@@ -151,13 +145,11 @@
                     'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
                 },
                 success: function(data) {
-                    console.log("fuck balls");
                     // Handle the response from the server (if needed)
                 },
                 error: function(xhr, status, error) {
                     console.error(xhr.responseText);
                 }
-
             });
         }
 
@@ -189,7 +181,7 @@
         }
 
         function addToAllStores() {
-            //send a post request to the view with the varieties that are checked
+            //sends a post request to the view with the varieties that are checked
             var selectedVarieties = [];
 
             // Iterate through the checked checkboxes and collect the values
@@ -197,7 +189,6 @@
                 selectedVarieties.push($(this).val());
             });
            
-            //console.log("selectedVarieties in addToAllStores", selectedVarieties)
             var addData = {
                 'varieties_to_add': JSON.stringify(selectedVarieties),
                 'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
@@ -209,7 +200,6 @@
                 data: addData,
                 success: function(data) {
                     // Handle the response from the server (if needed)
-                    console.log('Selected varieties added:', data);
                 },
                 error: function(xhr, status, error) {
                     console.error(xhr.responseText);
@@ -219,7 +209,7 @@
         }
 
         function removeFromAllStores() {
-            //send a post request to the view with the varieties that are checked
+            //sends a post request to the view with the varieties that are checked
             var selectedVarieties = [];
 
             // Iterate through the checked checkboxes and collect the values
@@ -237,15 +227,12 @@
                 data: removeData,
                 success: function(data) {
                     // Handle the response from the server (if needed)
-                    console.log('Selected varieties removed:', data);
                 },
                 error: function(xhr, status, error) {
                     console.error(xhr.responseText);
                 }
             });
-
         }
-
 
     </script>
 

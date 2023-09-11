@@ -24,14 +24,6 @@ urlpatterns = [
     
     path('admin/edit-products', product_views.edit_product_availabilities, name='admin_product_list'),
     path('admin/', admin.site.urls),
-    
     path('accounts/', include('stores.urls')), 
-    #path('stores/', include('stores.urls')),
-
-    #path('accounts/', include(('django.contrib.auth.urls','accounts'), namespace='accounts')),
-
-    #path('accounts/', include(('django.contrib.auth.urls', 'accounts'), namespace='accounts')),
-    #path('accounts/profile/', store_views.dashboard, name='profile'),  
-    #path('', lambda request: redirect('login/', permanent=False)),
 ]
 

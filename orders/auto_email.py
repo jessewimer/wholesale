@@ -1,16 +1,11 @@
-#send an email to the store owner
-import json
+## Todo: enable emails to be sent to store owners ##
+import os
 
-# Load the configuration data from config.json
-with open('config.json') as config_file:
-    config_data = json.load(config_file)
+# Accessing the email password, and username
+sender_email = os.environ.get('SENDER_EMAIL')
+sender_email_password = os.environ.get('SENDER_EMAIL_PASSWORD')
+uprising_email = os.environ.get('UPRISING_EMAIL')
 
-# Access the email password, API key, and username
-sender_email = config_data.get('sender_email')
-password = config_data.get('password')
-uprising_email = config_data.get('uprising_email')
-
-# !!!! for some reason the store is not being passed to the send_email function
 def send_email(order):
     import csv
     import smtplib
@@ -19,15 +14,15 @@ def send_email(order):
     from email.mime.base import MIMEBase
     from email import encoders
     data = order.products
-    print(order.products)
     
     filename = 'data.csv'
+    # subject for internal email
     subject = f'{order.store.name} - Order #{order.order_number}'
-    #subject = f'Order #{order.order_number}'
+
+    # subject for email to store owner
     subject2 = f'Uprising Seeds - Order #{order.order_number}'
-    body = f'Order was placed successfully.'
     
-    #store_email = order.store.email
+    # body = f'Order was placed successfully.'
 
     message = MIMEMultipart()
     message['From'] = sender_email
@@ -35,6 +30,7 @@ def send_email(order):
     message['Subject'] = subject
 
     # Uncomment following lines to send email to store owner
+    #store_email = order.store.email
     # message2 = MIMEMultipart(body)
     # message2['From'] = sender_email
     # message2['To'] = store_email
@@ -57,12 +53,9 @@ def send_email(order):
 
     smtp_obj = smtplib.SMTP(smtp_server, smtp_port)
     smtp_obj.starttls()
-    smtp_obj.login(sender_email, password)
+    smtp_obj.login(sender_email, sender_email_password)
 
-    # Send the email
+    # Send the email(s)
     smtp_obj.sendmail(sender_email, uprising_email, message.as_string())
     #smtp_obj.sendmail(sender_email, store_email, message2.as_string())
     smtp_obj.quit()
-
-    print('Emails sent successfully')
-    return 
