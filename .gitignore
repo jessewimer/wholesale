@@ -1,0 +1,29 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# SQLite database
+db.sqlite3
+
+
+# Config and secret files
+.env
+config.json
+
+# Local database dump
+local_db_dump.sql
+backup.json
+
+# OS and editor files
+.DS_Store
+*.swp
+*.swo
+*.bak
+*.tmp
+.env
