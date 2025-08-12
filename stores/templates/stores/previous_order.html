@@ -1,0 +1,19 @@
+<!-- previous_order_template.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Add any necessary styles for the PDF -->
+    <style>
+        /* Your styles go here */
+    </style>
+</head>
+
+<body>
+    <!-- Render the previous order data here -->
+    {% for item in previous_order_data %}
+        <p>{{ item.field_name }}</p>
+        <!-- Add more fields as needed -->
+    {% endfor %}
+</body>
+</html>

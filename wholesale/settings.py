@@ -14,20 +14,40 @@ from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# from sendgrid import SendGridAPIClient
-# from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType
-# api_key = config('SENDGRID_API')
+DATABASE_NAME = config('DATABASE_NAME')
+DATABASE_PASSWORD = config('DATABASE_PASSWORD')
+DATABASE_USER = config('DATABASE_USER')
+
+ENVIRONMENT = config('ENVIRONMENT', default='development')
+
+if ENVIRONMENT == 'production':
+    WSGI_APPLICATION = "wholesale.wsgi.application"
+    DEBUG = False
+    ALLOWED_HOSTS = ['uprising.pythonanywhere.com']
+    # Production-only settings here, e.g.:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+
+            'NAME': DATABASE_NAME,
+            'USER': DATABASE_USER,
+            'PASSWORD': DATABASE_PASSWORD,
+            'HOST': 'uprising.mysql.pythonanywhere-services.com',
+            'PORT': '3306',  # Leave empty for the default MySQL port (3306)
+        }
+    }
+else:
+    DEBUG = True
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+    # Local dev DB config
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 SECRET_KEY = config('DJANGO_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-ALLOWED_HOSTS = ['uprising.pythonanywhere.com']
-
-SITE_MAINTENANCE_MODE = True
-
-# Application definition
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -52,7 +72,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # "wholesale.middleware.MaintenanceModeMiddleware",
+    "wholesale.middleware.MaintenanceModeMiddleware",
 ]
 
 ROOT_URLCONF = "wholesale.urls"
@@ -72,24 +92,6 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = "wholesale.wsgi.application"
-
-DATABASE_NAME = config('DATABASE_NAME')
-DATABASE_PASSWORD = config('DATABASE_PASSWORD')
-DATABASE_USER = config('DATABASE_USER')
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-
-        'NAME': DATABASE_NAME,
-        'USER': DATABASE_USER,
-        'PASSWORD': DATABASE_PASSWORD,
-        'HOST': 'uprising.mysql.pythonanywhere-services.com',
-        'PORT': '3306',  # Leave empty for the default MySQL port (3306)
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -138,13 +140,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/accounts/dashboard/'
 
-#AUTH_USER_MODEL = 'stores.StoreUser'
-# settings.py
-
 CSP_DEFAULT_SRC = ("'self'",)
 CSP_SCRIPT_SRC = ("'self'", "https://code.jquery.com")
 CSP_CONNECT_SRC = ("'self'", "http://localhost:8000")  # Add your domain or source here
 
 CURRENT_ORDER_YEAR = 26
 PACKET_PRICE = 2.40
+SITE_MAINTENANCE_MODE = True
 

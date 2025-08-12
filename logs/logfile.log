@@ -1,0 +1,21 @@
+C:\Users\ndefe\OneDrive\Desktop\Python\Uprising\wholesale\stores\views.py changed, reloading.
+Watching for file changes with StatReloader
+"POST /accounts/login/ HTTP/1.1" 200 2081
+C:\Users\ndefe\OneDrive\Desktop\Python\Uprising\wholesale\wholesale\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Failed login attempt for username: pccballard, password: wrongo
+"POST /accounts/login/ HTTP/1.1" 200 2081
+Login attempt for username: pccballard, password: Uprising@27!
+"POST /accounts/login/ HTTP/1.1" 302 0
+"GET /accounts/pccballard/ HTTP/1.1" 200 248899
+C:\Users\ndefe\OneDrive\Desktop\Python\Uprising\wholesale\wholesale\settings.py changed, reloading.
+Watching for file changes with StatReloader
+"POST /accounts/logout/ HTTP/1.1" 302 0
+"GET /accounts/login/ HTTP/1.1" 200 2081
+"GET /accounts/login/ HTTP/1.1" 200 2081
+"POST /accounts/login/ HTTP/1.1" 200 2081
+C:\Users\ndefe\OneDrive\Desktop\Python\Uprising\wholesale\wholesale\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Failed login attempt for username: pccballard, password: alkfjadwosjf
+"POST /accounts/login/ HTTP/1.1" 200 2081
