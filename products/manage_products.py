@@ -3,11 +3,8 @@ import os
 import django
 import sys
 import csv
-
-
-# 5/19/2025 push
-
-
+from prettytable import PrettyTable
+from collections import Counter
 # Get the current directory path
 current_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -22,6 +19,36 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "wholesale.settings")
 django.setup()
 
 from products.models import Product
+
+def print_product_table():
+    products = Product.objects.all().order_by('item_number').values('item_number', 'sku', 'variety')
+
+    table = PrettyTable()
+    table.field_names = ["Item Number", "SKU", "Variety"]
+
+    for p in products:
+        table.add_row([p['item_number'], p['sku'], p['variety']])
+
+    print(table)
+
+
+def check_duplicate_item_numbers():
+    # Get all item_numbers from products
+    item_numbers = Product.objects.values_list('item_number', flat=True)
+
+    # Count occurrences of each item_number
+    counts = Counter(item_numbers)
+
+    # Find duplicates
+    duplicates = {num: count for num, count in counts.items() if count > 1}
+
+    if duplicates:
+        print("Duplicate item_numbers found:")
+        for item_num, count in duplicates.items():
+            print(f"Item Number: {item_num} - Count: {count}")
+    else:
+        print("No duplicate item_numbers found.")
+
 
 def update_notes_with_csv():
 
@@ -43,7 +70,6 @@ def update_notes_with_csv():
 
             product.save()
             print(f"{product.item_number} -- {product.notes}")
-
 
 
 def check_categories():
@@ -126,23 +152,9 @@ def view_product_varieties():
     for row in data:
         print(" | ".join(f"{str(row[i]):<{column_widths[i]}}" for i in range(len(row))))
 
-
-
-
-
-
-
-
     # for product in products:
 
     #     print(product.variety, product.category, product.super_type, product.veg_type, product.sub_type)
-
-def create_product_dict():
-    products = Product.objects.all()
-    product_dict = {
-        product.item_number: [product.variety, product.veg_type] for product in products
-    }
-    print(product_dict)
 
 def delete_duplicate_products():
     original_products = []
@@ -213,12 +225,14 @@ def create_product_object(item_num,
 
 # ####  MAIN PROGRAM BEGINS HERE  #### #
 
+print_product_table()
+# check_duplicate_item_numbers()
+
 # update_notes_with_csv()
 # check_categories()
 # update_all_product_photos()
 # fix_slashes()
-view_product_varieties()
-# create_product_dict()
+# view_product_varieties()
 # delete_duplicate_products()
 # update_product_description(item_num, description)
 # update_product_notes(item_num, notes)

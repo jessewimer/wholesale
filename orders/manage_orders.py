@@ -15,8 +15,11 @@ sys.path.append(project_path)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "wholesale.settings")
 django.setup()
 
-from orders.models import Order
-# from products.models import Product
+from orders.models import Order, OrderIncludes
+
+def view_order_includes(store_num):
+
+    pass
 
 # Deletes all order from the database
 def delete_orders():
@@ -25,9 +28,6 @@ def delete_orders():
         order.delete()
     print('orders deleted')
 
-    # print("total costs")
-    # for order in orders:
-    #     print(order.total_cost)
 
 
 def view_orders():
@@ -39,21 +39,31 @@ def view_orders():
 
 def view_single_store_orders(store_num):
     orders = Order.objects.all()
-    # for order in orders:
-    #     if order.order_number.startswith(store_num):
-    #         print(order.order_number)
     for order in orders:
         order_number_str = str(order.order_number)
         store_num_str = str(store_num)
         if order_number_str.startswith(store_num_str):
             print(order.order_date, order_number_str)
             print("products:")
-            print(order.products)
+            for include in order.orderincludes_set.all():
+                print(f"- {include.product.variety} ({include.product.veg_type}) x {include.quantity}")
 
-# delete_orders()
+
+# from orders.models import OrderIncludes
+# from stores.models import Store
+
+# store = Store.objects.get(store_user__username="pccballard")  # adjust as needed
+# includes = OrderIncludes.objects.filter(order__store=store)
+# for i in includes:
+#     print(i.product.item_number, i.order.order_number)
+
+
+
+
+delete_orders()
 
 # view_orders()
-view_single_store_orders(49)
+# view_single_store_orders(27)
 
 
 

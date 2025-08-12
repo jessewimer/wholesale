@@ -1,209 +1,355 @@
-<!DOCTYPE html>
 {% load static %}
 
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uprising Seeds - Wholesale Order</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
-
-        html, body {
-            height: 100%;
+        * {
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Prevent the double scrollbar */
-        }
-
-        .header-container {
-            position: sticky;
-            top: 0;
-            display: flex;
-            height: 107px;
-            align-items: center;
-            justify-content: space-between;
-            background-color: rgb(113, 147, 109);
-            z-index: 100; /* Ensure it's above other elements */
-            margin-bottom: -1px;
-        }
-
-        .heading {
-            font-size: 32px;
-            margin-left: 34px;
-            margin-bottom: 5px;
-        }
-
-
-
-
-        .order-total {
-            font-size: 24px;
-            font-weight: bold;
-            margin-right: 5px;
-        }
-        .order-total-tally {
-            font-size: 24px;
-            font-weight: bold;
-            margin-right: 20px;
-        }
-
-
-
-
-        .count{
-            font-size: 24px;
-            font-weight: bold;
-            margin-right: 5px;
-        }
-        .unique-items-count {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .slash{
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .slots {
-            font-size: 24px;
-            font-weight: bold;
-            margin-right: 20px;
-        }
-
-        .showAll-dropdown {
-            font-size: 50px;
-            font-weight: bold;
-            margin-right: 20px;
-            display: flex;
-            height: 40px;
-            border-radius: 7px;
-            background-color:#fff;
-        }
-
-        .button-container {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            margin-right: 20px;
-        }
-
-        .clear-button,
-        .submit-button {
-            width: 100px;
-            height: 40px;
-            font-size: 18px;
-            padding: 10px 20px;
-            color: black;
-            font-weight: bold;
-            border: none;
-            border-radius: 7px;
-            cursor: pointer;
-            text-decoration: none;
-            background-color: rgb(198, 198, 190);
-            transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
             box-sizing: border-box;
         }
 
-        .logout-button {
-            width: 100px;
-            height: 50px;
-            display: inline-block; /* Display as an inline block */
-            font-size: 18px;
-            padding: 10px 20px;
-            background-color: rgb(198, 198, 190);
-            color: rgb(6, 6, 6);
-            border: none;
-            border-radius: 7px;
-            font-weight: bold;
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Section - Reduced height */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2px;
+        }
+
+        .brand-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .store-name {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Controls Section with Stats in Middle */
+        .controls {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .left-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .stats-section {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 18px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .right-controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .styled-select {
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            background: white;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #333;
             cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .styled-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .styled-select:hover {
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
             text-decoration: none;
-            transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .clear-button:hover,
-        .submit-button:hover,
-        .logout-button:hover {
-            background-color: rgb(144, 145, 126);
-            color: black;
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #495057;
+            border: 2px solid #dee2e6;
         }
 
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Table Section - More space now available */
+
+        /* Outer wrapper with background blur */
+        .table-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Inner scroll container */
+        .table-container {
+            max-height: calc(100vh - 280px);
+            overflow-y: auto; /* vertical scroll */
+            border-radius: 20px;
+        }
+
+        /* Table styling */
         .product-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 16px;
         }
 
-        .table-container {
-            max-height: calc(100vh - 107px);
-            /*max-height: 100%;*/
-            overflow-y: auto;
-            position: relative;
-        }
-
-
-        .product-table td {
-            padding: 10px;
-            /*border-bottom: 1px solid #ddd;*/
-            text-align: center;
-        }
-
+        /* Sticky table headers */
         .product-table th {
             position: sticky;
             top: 0;
-            background-color: white;
-            font-weight: bold;
-            font-size: 20px;
-            z-index: 1;
-            height: 30px;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 10px;
+            z-index: 5;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 18px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .custom-select {
-            font-size: 18px; /* Default font size for dropdown */
-            font-weight: bold;
-            text-align: center;
-            font-family: Arial, sans-serif;
+        .product-table th:first-child {
+            border-top-left-radius: 16px;
         }
 
-        .custom-select option:checked {
-            font-weight: bold;
-            font-size: 18px; /* Adjust the font size as needed */
+        .product-table th:last-child {
+            border-top-right-radius: 16px;
         }
 
+        /* Table body cells */
         .product-table td {
-            background-color: #dbdbdb;
-            font-size: 18px;
-            padding: 10px;
-            border-bottom: 1px solid #070707;
+            padding: 16px;
+            border-bottom: 1px solid #f1f3f4;
+            background: white;
+            transition: all 0.3s ease;
         }
 
-        .product-table .description {
-            text-align: left !important;
+        .product-table tbody tr:hover td {
+            background: #f8f9ff;
+            transform: scale(1.01);
         }
 
-        .input-field {
-            /*width: 10%;*/
+        .product-table tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 16px;
+        }
+
+        .product-table tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 16px;
+        }
+
+
+        /* Input Styling */
+        .quantity-input {
+            width: 80px;
+            padding: 10px 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
             text-align: center;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
         }
 
-        .input-field input {
-            font-weight: bold;
-            width: 55px;
-            height: 35px;
-            text-align: center;
-            font-size: 15px;
-            font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-            border: 1px solid #000; /* Add a 1px solid black border */
-            border-radius: 4px;
+        .quantity-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        .filter-column {
-            text-align: center;
+        .quantity-input:hover {
+            border-color: #667eea;
+            background: white;
         }
 
-        /* CSS for the modal overlay for order for submission review */
+        /* Previously Ordered Badge */
+        .prev-ordered-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 50px;
+            height: 32px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .prev-ordered-badge.has-ordered {
+            background: linear-gradient(135deg, #10ac84, #00d2d3);
+            color: white;
+        }
+
+        .prev-ordered-badge.not-ordered {
+            background: #f1f2f6;
+            color: #747d8c;
+            border: 2px solid #ddd;
+        }
+
+        /* Thumbnail Styling */
+        .photo-thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            object-fit: cover;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #e1e5e9;
+        }
+
+        .photo-thumbnail:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border-color: #667eea;
+        }
+
+        /* Modal Styling */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -211,573 +357,830 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 9999;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
         }
 
-
-        .submit-modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            padding: 20px;
-            max-width: 80%;
-            max-height: 80%;
-            text-align: center;
-            overflow-y: auto; /* Enable vertical scrolling */
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
         }
 
-        /* CSS for the close button */
-        .submit-modal-close {
+        .modal-close {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 1px;
+            right: 1px;
+            background: transparent;
+            border: none;
+            font-size: 2rem;
             cursor: pointer;
+            color: #333;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: none;
+            transition: none;
         }
 
+        .modal-close:hover {
+            cursor: pointer;
+            /* no background or color change on hover */
+            transform: none;
+        }
+
+        .photo-modal-content {
+            text-align: center;
+        }
+
+        .photo-modal-image {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+
+        /* Error Message Styling */
         .error-message {
             display: none;
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #ffcccc;
-            padding: 10px 20px;
-            border: 1px solid #ff0000;
-            border-radius: 5px;
-            color: #ff0000;
-            z-index: 9999;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+            z-index: 1001;
+            font-weight: 500;
         }
 
-        #error-text {
-            margin: 0;
-            font-weight: bold;
+        /* Category badges */
+        .category-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        #close-error {
-            background-color: #ff0000;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 5px 10px;
-            cursor: pointer;
+        .category-vegetables {
+            background: linear-gradient(135deg, #55a3ff, #003d82);
+            color: white;
         }
 
-        .table-row {
-            border-bottom: 1px solid black;
-            background-color: #e9e7e7;
-            background-color: light #cfcece;
+        .category-herbs {
+            background: linear-gradient(135deg, #26de81, #20bf6b);
+            color: white;
         }
 
-        .previous-product-row {
-            border-bottom: 1px solid black;
-            background-color: lightyellow;
+        .category-flowers {
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+            color: white;
         }
 
-        .filter-label{
-            margin-bottom: 5px;
-            display: block;
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
+        .table-container {
+            animation: fadeInUp 0.6s ease-out;
+        }
 
-        .heading-container {
+        .header {
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .controls {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* Add this class for the view-orders-logout wrapper in your header */
+        .view-orders-logout {
             display: flex;
-            align-items: center;
+            gap: 12px;
         }
 
-        .wholesale-text {
-            font-size: 24px;
-            /*margin-top: 10px;*/
-            margin-left: 34px; /* Add left margin to push it away from the left edge */
-            margin-bottom: 20px;
-            text-align: left;
+        /* Modified responsive design - replace your existing media queries with these */
+        @media (max-width: 1024px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+
+            .left-controls {
+                justify-content: center;
+            }
+
+            /* Keep stats side by side on tablet */
+            .stats-section {
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .right-controls {
+                justify-content: center;
+            }
         }
 
-        .store-name {
-            font-size: 32px; /* You can adjust the font size as needed */
-            /*text-align: center; Center horizontally */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            /* Keep view orders and logout side by side on mobile */
+            .view-orders-logout {
+                display: flex;
+                gap: 8px;
+                justify-content: center;
+            }
+
+            /* Make buttons slightly smaller on mobile to fit side by side */
+            .view-orders-logout .btn {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+
+            .controls {
+                padding: 15px 20px;
+            }
+
+            .left-controls {
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            /* Fixed width for filter dropdowns on mobile */
+            .left-controls .styled-select {
+                max-width: 180px;
+                width: 100%;
+            }
+            /* Keep stats side by side on mobile with smaller padding and gap */
+            .stats-section {
+                justify-content: center;
+                gap: 10px;
+                /* Remove any flex-direction: column that was forcing them to stack */
+            }
+
+            /* Make stat items more compact on mobile */
+            .stat-item {
+                padding: 10px 14px;
+                min-width: 120px;
+            }
+
+            .stat-label {
+                font-size: 0.8rem;
+            }
+
+            .stat-value {
+                font-size: 1.1rem;
+            }
+
+            .right-controls {
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+            }
+
+            /* Fixed width for action buttons on mobile */
+            .right-controls .btn {
+                max-width: 120px;
+                padding: 8px 12px;
+                font-size: 0.85rem;
+                white-space: nowrap;
+            }
+            .brand-title {
+                font-size: 1.8rem;
+            }
+
+            .store-name {
+                font-size: 1.4rem;
+            }
+
+            .table-container {
+                max-height: calc(100vh - 320px);
+            }
         }
 
-        .store-heading {
-            display: flex;
-            flex-direction: column;
-            align-items: left;
-            margin-bottom: 20px;
-            margin-top: 20px;
+        /* Very small screens (320px and below) - extra compact */
+        @media (max-width: 480px) {
+            /* Even more compact stats for very small screens */
+            .stat-item {
+                padding: 8px 12px;
+                min-width: 110px;
+            }
+
+            .stat-label {
+                font-size: 0.75rem;
+            }
+
+            .stat-value {
+                font-size: 1rem;
+            }
+
+            /* Smaller buttons for very small screens */
+            .view-orders-logout .btn {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+
+            .stats-section {
+                gap: 8px;
+            }
         }
 
-        .table-row td{
-            border-bottom: 1px solid #2c2b2b; /* Darker bottom border (adjust the color as needed) */
-            background-color: #e6dd6a; /* Light gray background */
+        /* Loading state */
+        .btn.loading {
+            position: relative;
+            pointer-events: none;
         }
 
-        .table-row.ordered-item td {
-            border-bottom: 1px solid #2c2b2b;
-            background-color: lightgrey;
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            margin: auto;
+            border: 2px solid transparent;
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
-
-        .modal-buttons {
-            width: 50px;
-            height: 25px;
-            display: inline-block; /* Display as an inline block */
-            font-size: 14px;
-            /* padding: 10px 20px; */
-            background-color: rgb(198, 198, 190);
-            color: rgb(6, 6, 6);
-            /* give it a border */
-            border: none;
-            border-radius: 7px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background-color 0.2s, color 0.2s; /* Smooth transition for hover effects */
-            margin: 5px;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-
-        .modal-buttons:hover {
-            background-color: rgb(144, 145, 126);
-            color: black;
-        }
-
-        .modal-buttons-submit{
-            width: 80px;
-            height: 25px;
-            display: inline-block; /* Display as an inline block */
-            font-size: 14px;
-            /* padding: 10px 20px; */
-            background-color: rgb(198, 198, 190);
-            color: rgb(6, 6, 6);
-            border: none;
-            border-radius: 7px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background-color 0.2s, color 0.2s; /* Smooth transition for hover effects */
-            margin: 5px;
-        }
-
-        .modal-buttons-submit:hover {
-            background-color: rgb(144, 145, 126);
-            color: black;
-        }
-
-        .modal-buttons-submit-order{
-            width: 80px;
-            height: 25px;
-            display: inline-block; /* Display as an inline block */
-            font-size: 14px;
-            /* padding: 10px 20px; */
-            background-color: rgb(198, 198, 190);
-            color: rgb(6, 6, 6);
-            border: none;
-            border-radius: 7px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background-color 0.2s, color 0.2s; /* Smooth transition for hover effects */
-            margin: 5px;
-        }
-
-        .modal-buttons-submit-order:hover {
-            background-color: rgb(144, 145, 126);
-            color: black;
-        }
-
-        .modal-buttons-submit-order.loading {
-            cursor: wait;
-        }
-
-        .modal-buttons-submit-order.loading::after {
-            content: 'Submitting...';
-            margin-left: 5px;
-        }
-
     </style>
-
 </head>
 
 <body>
-    <div class="header-container">
-        <div class="store-heading">
-            <h1 class="heading">Uprising Seeds</h1>
-            <span class="wholesale-text">Wholesale Order Form</span>
+    <div class="container">
+        <!-- Header Section - Reduced height -->
+        <div class="header">
+            <div class="header-content">
+                <div class="brand-section">
+                    <h1 class="brand-title">Uprising Seeds</h1>
+                    <p class="brand-subtitle">Wholesale Order Portal</p>
+                </div>
+                <h2 class="store-name">{{ store.name }}</h2>
+                    <div class="view-orders-logout">
+                        <!--<button class="btn btn-primary" id="view-orders">View Orders</button>-->
+                        <button type="button" class="btn btn-primary" onclick="showViewOrdersModal()">View Orders</button>
+                        <button class="btn btn-danger" id="logout-button">Logout</button>
+                    </div>
+
+            </div>
         </div>
-        <h1 class="store-name">{{ store.name }}</h1>
-        <div class="button-container">
 
-            <span class="order-total">$ </span>
-            <span class="order-total-tally"><span id="order-total-tally">0.00</span></span>
+        <!-- Controls Section with Stats in Middle -->
+        <div class="controls">
+            <div class="left-controls">
+                <div class="filter-group">
+                    <label class="filter-label">Category Filter</label>
+                    <select id="category-filter" class="styled-select">
+                        <option value="">All Categories</option>
+                        <option value="vegetables">Vegetables</option>
+                        <option value="herbs">Herbs</option>
+                        <option value="flowers">Flowers</option>
+                    </select>
+                </div>
 
-            <span class="count">Variety Count: </span>
-            <span class="unique-items-count"><span id="unique-items-count">0</span></span>
-            <span class="slash">/</span>
-            <span class="slots">{{ slots }}</span>
-
-            <div class="showAll-dropdown">
-                <select id="showAll-dropdown" class="showAllfilter-dropdown custom-select" size="1">
-                    <option value="">All Items</option>
-                    <option value="newItems">New</option>
-                    <option value="prevItems">Previously Ordered</option>
-                </select>
+                <div class="filter-group">
+                    <label class="filter-label">Show Items</label>
+                    <select id="showAll-dropdown" class="styled-select">
+                        <option value="">All Items</option>
+                        <option value="newItems">New Items</option>
+                        <option value="prevItems">Previously Ordered</option>
+                    </select>
+                </div>
             </div>
 
-            <button class="clear-button" onclick=showVerifyClearOrderModal()>Clear</button>
-            <button class="submit-button" onclick=displayModal()>Submit</button>
-            <button class="logout-button" id="logout-button">Logout</button>
+            <div class="stats-section">
+                <div class="stat-item">
+                    <span class="stat-label">Subtotal</span>
+                    <span class="stat-value">$<span id="order-total-tally">0.00</span></span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Variety Count</span>
+                    <span class="stat-value"><span id="unique-items-count">0</span> / 50</span>
+                </div>
+            </div>
+
+            <div class="right-controls">
+                <button class="btn btn-secondary" onclick="showVerifyClearOrderModal()">Clear Order</button>
+                <button class="btn btn-primary" onclick="displayModal()">Review Order</button>
+                <!--<button class="btn btn-danger" id="logout-button">Logout</button>-->
+            </div>
         </div>
+
+        <!-- Table Section -->
+        <div class="table-wrapper">
+            <div class="table-container">
+                <form id="order-form" method="POST">
+                    <table class="product-table" id="product-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 100px;">Quantity</th>
+                                <th style="width: 120px;">Previously Ordered</th>
+                                <th style="width: 120px;">Category</th>
+                                <th>Type</th>
+                                <th>Sub Type</th>
+                                <th>Variety</th>
+                                <th style="width: 300px;">Description</th>
+                                <th style="width: 100px;">Photo</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr id="product-row-{{ product.item_number }}" class="table-row" data-category="{{ product.category|lower }}">
+                                <td>
+                                    <input type="number"
+                                           class="quantity-input"
+                                           name="quantity"
+                                           min="0"
+                                           step="5"
+                                           value="0"
+                                           data-item-number="{{ product.item_number }}"
+                                           data-variety="{{ product.variety }}"
+                                           data-veg-type="{{ product.veg_type }}"
+                                           tabindex="{{ forloop.counter }}">
+                                </td>
+                                <td>
+                                    <span class="prev-ordered-badge {% if product.previously_ordered_count > 0 %}ordered{% else %}not-ordered{% endif %}"
+                                          data-item-number="{{ product.item_number }}">
+                                        {{ product.previously_ordered_count }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="category-badge category-{{ product.category|lower }}">{{ product.category }}</span>
+                                </td>
+                                <td>{{ product.veg_type }}</td>
+                                <td>{{ product.sub_type }}</td>
+                                <td style="font-weight: 600;">{{ product.variety }}</td>
+                                <td>{{ product.description }}</td>
+                                <td>
+                                    {% if product.photo %}
+                                        <img src="{% static product.photo %}"
+                                             alt="{{ product.variety }}"
+                                             class="photo-thumbnail"
+                                             onclick="openPhotoModal('{% static product.photo %}', '{{ product.variety }}')">
+                                    {% else %}
+                                        <img src="{% static 'default-photo.svg' %}"
+                                             alt="{{ product.variety }}"
+                                             class="photo-thumbnail"
+                                             onclick="openPhotoModal('{% static 'default-photo.svg' %}', '{{ product.variety }}')">
+                                    {% endif %}
+                                </td>
+                                <td>{{ product.notes }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+
+    <!-- View Orders Modal -->
+    <div class="modal-overlay" id="viewOrdersModal">
+       <div class="modal-content" style="max-width: 800px; width: 90%;">
+           <button class="modal-close" onclick="closeViewOrdersModal()">&times;</button>
+           <h2 style="margin-bottom: 20px; color: #333;">Order History (20{{ current_year }})</h2>
+
+           <div class="orders-list" style="max-height: 60vh; overflow-y: auto;">
+               {% if current_year_orders %}
+                   <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                       <thead>
+                           <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                               <th style="padding: 12px; text-align: left; border-right: 1px solid #dee2e6;">Order #</th>
+                               <th style="padding: 12px; text-align: center; border-right: 1px solid #dee2e6;"># Pkts</th>
+                               <th style="padding: 12px; text-align: center; border-right: 1px solid #dee2e6;">Date</th>
+                               <th style="padding: 12px; text-align: center; border-right: 1px solid #dee2e6;">Subtotal</th>
+                               <th style="padding: 12px; text-align: center;">Shipping</th>
+                           </tr>
+                       </thead>
+                       <tbody>
+                            {% for order in current_year_orders %}
+                           <tr style="border-bottom: 1px solid #dee2e6; cursor: pointer; transition: background-color 0.2s;"
+                               onmouseover="this.style.backgroundColor='#f8f9fa'"
+                               onmouseout="this.style.backgroundColor=''"
+                               onclick="generatePDF('{{ order.order_number }}')">
+                               <td style="padding: 12px; border-right: 1px solid #dee2e6; font-weight: bold; color: #007bff;">
+                                   {{ order.order_number }}
+                               </td>
+                                <td style="padding: 12px; text-align: center; border-right: 1px solid #dee2e6;">
+
+                                   {% if order.total_items %}
+                                       {{ order.total_items|floatformat:0 }}
+                                   {% else %}
+                                       <span style="color: #6c757d;">N/A</span>
+                                   {% endif %}
+
+
+                                </td>
+                               <td style="padding: 12px; text-align: center; border-right: 1px solid #dee2e6;">
+                                   {{ order.order_date}}
+                               </td>
+
+                               <td style="padding: 12px; text-align: center; border-right: 1px solid #dee2e6;">
+                                   {% if order.total_cost %}
+                                       ${{ order.total_cost|floatformat:2 }}
+                                   {% else %}
+                                       <span style="color: #6c757d;">N/A</span>
+                                   {% endif %}
+                               </td>
+
+                               <td style="padding: 12px; text-align: center;">
+                                   {% if order.shipping_cost %}
+                                       ${{ order.shipping_cost|floatformat:2 }}
+                                   {% else %}
+                                       <span style="color: #6c757d;">TBD</span>
+                                   {% endif %}
+                               </td>
+                           </tr>
+                            {% endfor %}
+
+                       </tbody>
+                   </table>
+               {% else %}
+                   <div style="text-align: center; padding: 40px; color: #6c757d;">
+                       <p>No orders found for 20{{ current_year }}.</p>
+                   </div>
+               {% endif %}
+           </div>
+
+           <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+               <button type="button" class="btn btn-secondary" onclick="closeViewOrdersModal()">Close</button>
+           </div>
+       </div>
     </div>
 
-    <form id="order-form" method="POST">
-        {% csrf_token %}
-        <div class="table-container">
-            <table class="product-table", id="product-table">
-                <tr>
-                    <th class="input-field">Qty</th>
-                    <th>Notes</th>
-                    <th class="filter-column">
-                        <!-- Category -->
-                        <div class="filter-dropdown" style="margin-bottom: 1px;">
-                            <label for="category-filter" class="filter-label">Filter:</label>
 
-                            <select id="category-filter" class="filter-dropdown custom-select" size="1">
-                                <option value="">All</option>
-                                <option value="vegetables">Vegetables</option>
-                                <option value="herbs">Herbs</option>
-                                <option value="flowers">Flowers</option>
-                            </select>
-
-                        </div>
-                    </th>
-                    <th>Type</th>
-                    <th>Sub Type</th>
-                    <th>Variety</th>
-                    <th class="description">Description</th>
-                    <th class="photo">Photo</th>
-                </tr>
-
-            {% for product in products %}
-
-                <tr id="product-row-{{ product.item_number }}" class="table-row">
-
-                    <td class="input-field"><input type="number" name="quantity" min="0", step="5" value="0" item-number="{{ product.item_number }}" variety="{{ product.variety }}" veg-type="{{ product.veg_type }}" tabindex="{{ forloop.counter }}"></td>
-                    <td>{{ product.notes }}</td>
-                    <td>{{ product.category }}</td>
-                    <td>{{ product.veg_type }}</td>
-                    <td>{{ product.sub_type }}</td>
-                    <td>{{ product.variety }}</td>
-                    <td class="description">{{ product.description }}</td>
-
-                    <td>
-                        <a href="#" data-photolink="{% static product.photo %}" onclick="navigateToPhoto(event)">
-                            View Photo
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </table>
-        </div>
-
-    </form>
-
+    <!-- Order Review Modal -->
     <div class="modal-overlay" id="modalOverlay">
-        <div class="submit-modal-content">
-            <span class="submit-modal-close" onclick="closeModal()">&times;</span>
-            <!-- a new div for displaying ordered products -->
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2 style="margin-bottom: 20px; color: #333;">Order Review</h2>
             <div id="orderedProducts"></div>
-            <p>Order Total: $<span id="orderTotal"></span></p>
-            <p>Click "Submit" to submit for processing or "Cancel" to go back and make changes to your order.</p>
-            <p>Enable pop-ups to allow order confirmation page to open once order is submitted.</p>
-            <button id="modalSubmitButton" type="button" class="modal-buttons-submit-order">Submit</button>
-            <button id="modalCloseButton" type="button" class="modal-buttons-submit" onclick="closeModal()">Cancel</button>
+            <div style="margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 12px;">
+                <h3>Order Total: $<span id="orderTotal"></span></h3>
+            </div>
+            <p style="color: #666; margin-bottom: 20px;">Click "Submit" to submit for processing or "Cancel" to go back and make changes to your order.</p>
+            <p style="color: #666; margin-bottom: 30px;">Once your order is placed, you will be able to view it by clicking on the 'View Orders" button.</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button id="modalSubmitButton" type="button" class="btn btn-primary">Submit Order</button>
+                <button id="modalCloseButton" type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </div>
         </div>
     </div>
 
-    <!--<div class="modal-overlay" id="modalOverlay">-->
-    <!--    <div class="submit-modal-content">-->
-    <!--        <span class="submit-modal-close" onclick="closeModal()">&times;</span>-->
-            <!-- a new div for displaying ordered products -->
-    <!--        <div id="orderedProducts"></div>-->
-    <!--        <p>Order Total: $<span id="orderTotal"></span></p>-->
-    <!--        <p>If submitted, your invoice will be mailed separately with your order.</p>-->
-    <!--        <button id="modalSubmitButton" type="button" class="modal-buttons-submit-order">Submit</button>-->
-    <!--        <button id="modalCloseButton" type="button" class="modal-buttons-submit" onclick="closeModal()">Cancel</button>-->
+    <!-- Photo Modal -->
+    <div class="modal-overlay" id="photoModal">
+        <div class="modal-content photo-modal-content">
+            <button class="modal-close" onclick="closePhotoModal()">&times;</button>
+            <img id="photoModalImage" class="photo-modal-image" src="" alt="">
+            <h3 id="photoModalTitle" style="margin-top: 20px; color: #333;"></h3>
+        </div>
+    </div>
+
+    <!-- Photo Modal -->
+    <!--<div class="modal-overlay" id="photoModal">-->
+    <!--    <div class="modal-content photo-modal-content">-->
+    <!--        <div class="photo-container">-->
+    <!--            <button class="modal-close" onclick="closePhotoModal()">&times;</button>-->
+    <!--            <img id="photoModalImage" class="photo-modal-image" src="" alt="">-->
+    <!--        </div>-->
+    <!--        <h3 id="photoModalTitle" style="margin-top: 20px; color: #333;"></h3>-->
     <!--    </div>-->
     <!--</div>-->
 
-    <!-- Modal for order submission success message -->
+    <!-- Success Modal -->
     <div class="modal-overlay" id="successModalOverlay">
-        <div class="submit-modal-content">
-            <span class="submit-modal-close" onclick="closeModal()">&times;</span>
-            <h2>Order Submitted Successfully!</h2>
+        <div class="modal-content" style="text-align: center;">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2 style="color: #10ac84; margin-bottom: 20px;">Order Submitted Successfully!</h2>
             <p>We will notify you when your order ships.</p>
         </div>
     </div>
 
-    <!-- Modal for clear order verification -->
+    <!-- Clear Order Verification Modal -->
     <div class="modal-overlay" id="verifyClearOrder">
-        <div class="submit-modal-content">
-            <span class="submit-modal-close" onclick="closeModal()">&times;</span>
-            <h2>Clear Order</h2>
-            <p>Are you sure you want to clear your order?</p>
-            <button id="submitClearOrder" type="button" class="modal-buttons">Yes</button>
-            <button id="clearOrderCloseButton" type="button" class="modal-buttons" onclick="closeModal()">No</button>
+        <div class="modal-content" style="text-align: center;">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2 style="margin-bottom: 20px;">Clear Order</h2>
+            <p style="margin-bottom: 30px;">Are you sure you want to clear your order?</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button id="submitClearOrder" type="button" class="btn btn-danger">Yes, Clear</button>
+                <button id="clearOrderCloseButton" type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </div>
         </div>
     </div>
 
-    <!-- Modal for confirming logout -->
+    <!-- Logout Verification Modal -->
     <div class="modal-overlay" id="verifyLogout">
-        <div class="submit-modal-content">
-            <span class="submit-modal-close" onclick="closeModal()">&times;</span>
-            <h2>Logout</h2>
-            <p> Are you sure? Any order data that <br> has not been submitted will be lost. </p>
-            <button id="submitLogout" type="button" class="modal-buttons">Yes</button>
-            <button id="logoutCloseButton" type="button" class="modal-buttons" onclick="closeModal()">No</button>
+        <div class="modal-content" style="text-align: center;">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2 style="margin-bottom: 20px;">Logout</h2>
+            <p style="margin-bottom: 30px;">Are you sure? Any order data that has not been submitted will be lost.</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button id="submitLogout" type="button" class="btn btn-danger">Yes, Logout</button>
+                <button id="logoutCloseButton" type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </div>
         </div>
     </div>
 
-    <div class="error-message">
-        <p id="error-text">Error message goes here</p>
-        <button id="close-error">Close</button>
+    <!-- Error Message -->
+    <div class="error-message" id="errorMessage">
+        <span id="error-text">Error message goes here</span>
+        <button onclick="closeErrorMessage()" style="margin-left: 15px; background: none; border: none; color: white; cursor: pointer;">✕</button>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
-
+        // Global variables
         var orderData = {};
-        var pktPrice = 2.40;
+        const pktPrice = parseFloat("{{ pkt_price }}");
+        var product_dict = JSON.parse('{{ product_dict_json|escapejs }}');
+        var previousOrderData = {};
+        window.logoutUrl = "{% url 'logout' %}";
 
-        var product_dict = {101: ['Calypso', 'BEAN'], 102: ['Cocaigne', 'BEAN'], 103: ['Flageolet Vert', 'BEAN'], 104: ['Hungarian Rice Bean', 'BEAN'], 105: ['Hutterite', 'BEAN'], 106: ['Ireland Creek Annie', 'BEAN'],
-                            107: ['Jacob’s Cattle', 'BEAN'], 108: ['Jacob’s Gold', 'BEAN'], 109: ['Kenearly Yellow Eye', 'BEAN'], 110: ['Lina Sisco’s Bird Egg', 'BEAN'], 111: ['Marfax', 'BEAN'], 112: ['Purgatorio', 'BEAN'],
-                            113: ['Rockwell', 'BEAN'], 114: ['Rosso di Lucca', 'BEAN'], 115: ['Tiger’s Eye', 'BEAN'], 116: ['Zolfino', 'BEAN'], 117: ['Alaric (Tarbais)', 'BEAN'], 118: ['Annie Jackson', 'BEAN'],
-                            119: ['Pellegrini', 'BEAN'], 120: ['Sorana', 'BEAN'], 121: ['Tolosa', 'BEAN'], 122: ['Karmazyn', 'BEAN'], 123: ['Blooming Prairie', 'BEAN'], 124: ['Dragon Langerie', 'BEAN'], 125: ['Empress', 'BEAN'],
-                            126: ['Provider', 'BEAN'], 127: ['Marvel of Venice', 'BEAN'], 128: ['Trionfo Violetto', 'BEAN'], 129: ['Touchstone', 'BEET'], 130: ['Crapaudine', 'BEET'], 131: ['Feuer Kugel', 'BEET'],
-                            132: ['Lutz Green Leaf', 'BEET'], 133: ['Shiraz', 'BEET'], 134: ['Chioggia', 'BEET'], 385: ['3 Beet Mix', 'BEET'], 135: ['Novantina', 'BROCCOLI'], 136: ['Solstice', 'BROCCOLI'],
-                            137: ['Umpqua', 'BROCCOLI'], 138: ['Takinogawa', 'BURDOCK'], 139: ['Dowinda', 'CABBAGE'], 140: ['Filderkraut', 'CABBAGE'], 141: ['January King', 'CABBAGE'], 142: ['Columbia', 'CABBAGE'],
-                            143: ['Marner', 'CABBAGE'], 144: ['Gobbo di Nizza', 'CARDOON'], 145: ['Rainbow Carrot Mix', 'CARROT'], 146: ['Dragon', 'CARROT'], 147: ['Scarlet Nantes', 'CARROT'], 148: ['Tonda di Parigi', 'CARROT'],
-                            149: ['Prestige', 'CAULIFLOWER'], 150: ['Monarch', 'CELERIAC'], 151: ['Rainbow Chard', 'CHARD'], 152: ['Cascade Glaze', 'COLLARDS'], 153: ['Champion', 'COLLARDS'], 154: ['Floriani Red Flint', 'CORN'],
-                            155: ['Painted Mountain', 'CORN'], 156: ['Amish Butter', 'CORN'], 157: ['Dakota Black', 'CORN'], 158: ['Tuxana', 'CORN'], 159: ['Vorgebirgstrauben', 'CUCUMBER'], 160: ['Çengelköy', 'CUCUMBER'],
-                            161: ['Lemon', 'CUCUMBER'], 162: ['Sandita', 'CUCUMBER'], 163: ['Shintokiwa', 'CUCUMBER'], 164: ['Silver Slicer', 'CUCUMBER'], 165: ['Sweet Marketmore', 'CUCUMBER'], 166: ['Diamond', 'EGGPLANT'],
-                            378: ['Violetta di Firenze', 'EGGPLANT'], 167: ['Finale', 'FENNEL'], 168: ['Suriname', 'GREENS'], 169: ['Astro', 'GREENS'], 170: ['Rucola', 'GREENS'], 383: ['Wasabi Arugula', 'GREENS'],
-                            171: ['Early Mizuna', 'GREENS'], 172: ['Golden Frills', 'GREENS'], 173: ['Ruby Streaks', 'GREENS'], 174: ['Tatsoi', 'GREENS'], 175: ['Uprising Braising Mix', 'GREENS'],
-                            176: ['Wrinkled Crinkled Crumpled', 'GREENS'], 178: ['Uprising Mild Mix', 'GREENS'], 179: ['Uprising Spicy Mix', 'GREENS'], 180: ['Green Wave', 'GREENS'], 177: ['Broadleaf', 'GREENS'],
-                            181: ['Blood Sorrel', 'GREENS'], 182: ['Erba Stella (Minutina)', 'GREENS'], 183: ['A Tale of Three Kales', 'KALE'], 184: ['Black Tuscan', 'KALE'], 185: ['Dazzling Blue', 'KALE'],
-                            186: ['Dwarf Blue Scotch', 'KALE'], 187: ['Red Russian', 'KALE'], 188: ['Russian Frills', 'KALE'], 189: ['Lincoln', 'LEEK'], 190: ['Neptune', 'LEEK'], 191: ['Winter Density', 'LETTUCE'],
-                            192: ['Divina', 'LETTUCE'], 193: ['Scarlet Butter', 'LETTUCE'], 194: ['Tennis Ball', 'LETTUCE'], 195: ['Emerald Fan', 'LETTUCE'], 196: ['Hyper Red Rumpled Waved', 'LETTUCE'],
-                            197: ['La Brillante', 'LETTUCE'], 198: ['Merlot', 'LETTUCE'], 199: ['Royal Red', 'LETTUCE'], 200: ['Bijella', 'LETTUCE'], 201: ['Flashy Butter Oak', 'LETTUCE'], 202: ['Italienischer', 'LETTUCE'],
-                            203: ['Mascara', 'LETTUCE'], 204: ['Barnwood Gem', 'LETTUCE'], 205: ['Cimarron', 'LETTUCE'], 206: ['Eruption', 'LETTUCE'], 207: ['Flashy Trout’s Back', 'LETTUCE'], 208: ['Jericho', 'LETTUCE'],
-                            375: ['Little Gem', 'LETTUCE'], 209: ['Uprising Lettuce Mix', 'LETTUCE'], 210: ['Blacktail Mountain', 'MELON'], 211: ['Janosik', 'MELON'], 212: ['Eel River', 'MELON'],
-                            213: ['Giallo D’Inverno', 'MELON'], 214: ['Prescott Fond Blanc', 'MELON'], 215: ['Sakata Sweet', 'MELON'], 216: ['Ishikura Long Winter', 'ONION'], 217: ["Ed's Red", 'ONION'],
-                            376: ['Rijnsburg 5', 'ONION'], 218: ['Rossa di Milano', 'ONION'], 219: ['Ailsa Craig', 'ONION'], 220: ['Red Long of Tropea', 'ONION'], 221: ['Lancer', 'PARSNIP'], 222: ['Roveja', 'PEA'],
-                            223: ['Maestro', 'PEA'], 224: ['Cascadia', 'PEA'], 225: ['Sugar Snap', 'PEA'], 226: ['Sugar Ann', 'PEA'], 227: ['Golden Sweet', 'PEA'], 228: ['Ho Lan Dow', 'PEA'], 229: ['Schweizer Riesen', 'PEA'],
-                            230: ['Basque', 'PEPPER'], 231: ['Pimiento di Padron', 'PEPPER'], 232: ['Sarit Gat', 'PEPPER'], 377: ['Biquinho Red', 'PEPPER'], 233: ['Elephant Ears', 'PEPPER'], 234: ['Jimmy Nardello', 'PEPPER'],
-                            235: ['Marta Polka', 'PEPPER'], 236: ['Petit Marseillais', 'PEPPER'], 237: ['Long Pie', 'PUMPKIN'], 238: ['Winter Luxury', 'PUMPKIN'], 239: ['French Breakfast', 'RADISH'], 240: ['Sora', 'RADISH'],
-                            241: ['Beaujolais', 'SPINACH'], 242: ['Winter Bloomsdale', 'SPINACH'], 243: ['Winter Giant', 'SPINACH'], 244: ['Odesa', 'SQUASH'], 245: ['Yellow Crookneck', 'SQUASH'],
-                            246: ['Costata Romanesco', 'SQUASH'], 247: ['Dark Star', 'SQUASH'], 248: ['Bitterroot Buttercup', 'SQUASH'], 249: ['Black Forest Kabocha', 'SQUASH'], 250: ['Black Futsu', 'SQUASH'],
-                            251: ['Burpee’s Butterbush', 'SQUASH'], 252: ['Sweet Meat', 'SQUASH'], 253: ['Zeppelin Delicata', 'SQUASH'], 379: ['Zucca Mantovana', 'SQUASH'], 254: ['De Milpa', 'TOMATILLO'],
-                            255: ['Black Cherry', 'TOMATO'], 256: ['Blush', 'TOMATO'], 257: ['Pinky', 'TOMATO'], 258: ['Sweet Orange II', 'TOMATO'], 259: ['Afghan', 'TOMATO'], 260: ['Jaune Flamme', 'TOMATO'],
-                            261: ['Latah', 'TOMATO'], 262: ['Matina', 'TOMATO'], 263: ['Stupice', 'TOMATO'], 264: ['Black Prince', 'TOMATO'], 265: ['Nepal', 'TOMATO'], 266: ['Cuor di Bue Albenga', 'TOMATO'],
-                            283: ['Anise Hyssop', 'ANISE HYSSOP'], 267: ['Italian Large Leaf', 'BASIL'], 382: ['German Chamomile', 'CHAMOMILE'], 268: ['Pokey Joe', 'CILANTRO'], 269: ['Goldkrone', 'DILL'],
-                            303: ['Echinacea purpurea', 'ECHINACEA'], 270: ['Hyssop', 'HYSSOP'], 321: ['Mexican Tarragon', 'MARIGOLD'], 271: ['Mentuccia Romana', 'NEPITELLA'], 272: ['Mersin', 'PARSLEY'],
-                            273: ['Sculpit (Stridolo)', 'SCULPIT'], 274: ['Blue Fenugreek', 'TRIGONELLA'], 275: ['Tulsi (Sacred Basil)', 'TULSI'], 276: ['Common Mullein', 'VERBASCUM'], 278: ['Coral Fountains', 'AMARANTH'],
-                            279: ['Elephant Head', 'AMARANTH'], 280: ['Hot Biscuits', 'AMARANTH'], 281: ['Love Lies Bleeding', 'AMARANTH'], 282: ['Opopeo', 'AMARANTH'], 284: ['Hot Pants', 'ASTER'],
-                            285: ['Tower Chamois', 'ASTER'], 380: ['Tower Silver', 'ASTER'], 286: ['Black Ball', 'BACHELOR’S BUTTON'], 287: ['Florist Blue Boy', 'BACHELOR’S BUTTON'], 288: ['Aloha Blanca', 'BASKET FLOWER'],
-                            289: ['Borage', 'BORAGE'], 291: ['Calendula Mix', 'CALENDULA'], 290: ['Zeolights', 'CALENDULA'], 292: ['Ruby Parfait', 'CELOSIA'], 293: ['Supercrest and Friends', 'CELOSIA'],
-                            294: ['Pride of Gibraltar', 'CERINTHE'], 295: ['Violet Queen', 'CLEOME'], 296: ['Black Barlow', 'COLUMBINE'], 297: ['Bordeaux Barlow', 'COLUMBINE'], 298: ['Roulette', 'COREOPSIS'],
-                            299: ['Diablo', 'COSMOS'], 300: ['Snow Puff', 'COSMOS'], 301: ['Velouette', 'COSMOS'], 302: ['Xsenia', 'COSMOS'], 381: ['Pink Butterfly', 'DELPHINIUM'], 386: ['Blue Lace Flower', 'DIDISCUS'],
-                            304: ['Edible Flower Mix', 'EDIBLE'], 305: ['Blue Glitter', 'ERYNGIUM'], 306: ['Full Moon', 'FOUR O’CLOCK'], 307: ['Strega', 'FOUR O’CLOCK'], 308: ['Apricot Beauty', 'FOXGLOVE'],
-                            309: ['Café Creme', 'FOXGLOVE'], 310: ['Giant Yellow Herold', 'FOXGLOVE'], 311: ['Wild Cascades', 'FOXGLOVE'], 312: ['Frosted Explosion', 'GRASS'], 313: ['Covent Garden', 'GYPSOPHILA'],
-                            314: ['Blue Pearl', "JACOB'S LADDER"], 315: ['Blue Cloud', 'LARKSPUR'], 316: ['Earl Grey', 'LARKSPUR'], 317: ['Salmon Beauty', 'LARKSPUR'], 318: ['White Cloud', 'LARKSPUR'],
-                            319: ['French Brocade', 'MARIGOLD'], 320: ['Gems', 'MARIGOLD'], 322: ['Pinwheel', 'MARIGOLD'], 323: ['Lemon Bergamot', 'MONARDA'], 324: ['Grandpa Ott’s', 'MORNING GLORY'],
-                            325: ['Trailing Mix', 'NASTURTIUM'], 326: ['Alaska', 'NASTURTIUM'], 327: ['Langsdorff’s Tobacco', 'NICOTIANA'], 328: ['Lime Green', 'NICOTIANA'], 329: ['Only The Lonely', 'NICOTIANA'],
-                            330: ['Peach Screamer', 'NICOTIANA'], 331: ['Bridal Veil', 'NIGELLA'], 332: ['Delft Blue', 'NIGELLA'], 333: ['Exotica', 'NIGELLA'], 334: ["Bee's Friend", 'PHACELIA'],
-                            335: ['California Poppy Mix', 'POPPY'], 336: ['Pastel Meadows', 'POPPY'], 337: ['Amazing Grey', 'POPPY'], 338: ['Cornfield', 'POPPY'], 339: ['Mother of Pearl', 'POPPY'], 340: ['Pandora', 'POPPY'],
-                            341: ['Black Swan', 'POPPY'], 342: ['Danish Flag', 'POPPY'], 343: ['Flemish Antique', 'POPPY'], 344: ['Frilled White', 'POPPY'], 345: ['Ziar Breadseed', 'POPPY'], 346: ['Autumn Sunset', 'RUDBECKIA'],
-                            347: ['Prairie Glow', 'RUDBECKIA'], 348: ['Prairie Sun', 'RUDBECKIA'], 349: ['Sahara', 'RUDBECKIA'], 350: ['Texas Hummingbird Sage', 'SALVIA'], 351: ['Transylvanian Sage', 'SALVIA'],
-                            352: ['White Swan', 'SALVIA'], 353: ['White Beauty', 'SAPONARIA'], 354: ['Fama Deep Blue', 'SCABIOSA'], 355: ['Fata Morgana', 'SCABIOSA'], 356: ['Giant Yellow', 'SCABIOSA'],
-                            357: ['Salmon Queen', 'SCABIOSA'], 358: ['Snowmaiden', 'SCABIOSA'], 359: ['Apricot Peach Mix', 'STRAWFLOWER'], 360: ['Monstrosum Fireball', 'STRAWFLOWER'], 361: ['Garden Anarchy', 'SUNFLOWER'],
-                            362: ['Giant Sungold', 'SUNFLOWER'], 363: ['Reds', 'SUNFLOWER'], 364: ['Soraya', 'SUNFLOWER'], 365: ['Tarahumara', 'SUNFLOWER'], 366: ['Transylvanian Giant', 'SUNFLOWER'],
-                            367: ['April in Paris', 'SWEET PEA'], 384: ['Azureus', 'SWEET PEA'], 387: ['Lathyrus Chloranthus', 'SWEET PEA'], 368: ['Arctic Summer', 'VERBASCUM'], 369: ['Phoenician Mullein', 'VERBASCUM'],
-                            370: ['Benary’s Giant Mix', 'ZINNIA'], 371: ['Queen Red Lime', 'ZINNIA'], 372: ['Salmon Rose', 'ZINNIA'], 373: ['Zinderella Lilac', 'ZINNIA'], 374: ['Zinderella Peach', 'ZINNIA'],
-                            388: ['Borlotto Gaston', 'BEAN'], 389: ["Aunt Molly's", 'GROUNDCHERRY'], 390: ['Goldrush', 'LETTUCE'], 391: ['Prize Choi', 'GREENS'], 393: ['Ҫekirdeği Oyali', 'MELON'],
-                            394: ['Yellow Nardello', 'PEPPER'], 395: ['Double Diamond', 'YARROW'], 396: ['Love Parade', 'YARROW'], 397: ['Green Gold', 'BUPLEURUM'], 398: ['Silvery Rose', 'STRAWFLOWER'],
-                            400: ['Speckled', 'LETTUCE'], 401: ["Grandpa Admire's", 'LETTUCE'], 402: ['Australian Yellowleaf', 'LETTUCE'], 403: ['Cracoviensis', 'LETTUCE'], 404: ['Les Orielles du Diable', 'LETTUCE'],
-                            405: ['Reine de Glaces', 'LETTUCE'], 406: ['Howden', 'PUMPKIN'], 407: ['Koralik', 'TOMATO'], 408: ['Galina', 'TOMATO'], 409: ['Gold Rush', 'BEAN'], 410: ['Yellowstone', 'CARROT'],
-                            411: ["Gardener's Sweetheart", 'TOMATO'], 412: ['Carbon', 'TOMATO'], 413: ['Fairy Trumpets', 'FOUR O’CLOCK'], 414: ['Bronze Queen', 'NICOTIANA'], 415: ['Kingfisher', 'SWEET PEA'],
-                            416: ['Mollie Rilstone', 'SWEET PEA'], 417: ['Windsor', 'SWEET PEA'], 392: ['Matsushima', 'CABBAGE'], 418: ['Vertissimo', 'CHERVIL'], 399: ['Torch', 'SUNFLOWER'], 419: ['Flora Norton', 'SWEET PEA'],
-                            420: ['Bristol', 'Sweet Pea'], 421: ['Suzy Z', 'Sweet Pea'], 422: ['Just Jenny', 'Sweet Pea'], 423: ['Mystery Rose', 'FORGET-ME-NOT'], 424: ['Coral', 'CARROT'], 441: ['Merveille des Quatre Saisons', 'LETTUCE'],
-                            442: ['Stocky Red Roaster', 'PEPPER'], 433: ['Manyel', 'TOMATO'], 432: ['Moldovan Green', 'TOMATO'], 434: ['Northern Ruby', 'TOMATO'], 435: ['Red Fig', 'TOMATO'], 440: ['Lilac Pompom', 'POPPY']};
-
-
-
-        // Function to update the unique item count
+        // Function to update the unique item count and total price
         function updateUniqueItemCount() {
-            //console.log('inside updateUniqueItemCount function');
-            const inputFields = document.querySelectorAll('.input-field input');
+            const inputFields = document.querySelectorAll('.quantity-input');
             let uniqueItemCount = 0;
             let totalItemCount = 0;
             let totalPrice = 0.00;
 
             inputFields.forEach((input) => {
-                const quantity = parseInt(input.value);
-                if (!isNaN(quantity) && quantity > 0) {
+                const quantity = parseInt(input.value) || 0;
+                if (quantity > 0) {
                     uniqueItemCount++;
                 }
-
-            if (!isNaN(quantity)) {
-                totalItemCount += quantity; // Sum up all input field values
-            }
-
+                totalItemCount += quantity;
             });
 
             totalPrice = (totalItemCount * pktPrice).toFixed(2);
 
-            // Display the count in the HTML
             document.getElementById('unique-items-count').textContent = uniqueItemCount;
             document.getElementById('order-total-tally').textContent = totalPrice;
         }
 
+
+        // Function to populate previously ordered quantities
+        function populatePreviousOrders() {
+            var previousItems = {{ previous_items|safe }};
+            console.log('Previous items data:', previousItems);
+
+            // Convert array to object for easier lookup if it's just item numbers
+            if (Array.isArray(previousItems) && previousItems.length > 0 && typeof previousItems[0] === 'string') {
+                // If it's just an array of item numbers, treat them as having been ordered
+                previousItems.forEach(itemNumber => {
+                    previousOrderData[itemNumber] = 1; // Default to 1 if no quantity data
+                });
+            } else if (typeof previousItems === 'object') {
+                previousOrderData = previousItems;
+            }
+
+            // Update the badges for each product
+            document.querySelectorAll('.prev-ordered-badge').forEach(badge => {
+                const itemNumber = badge.getAttribute('data-item-number');
+                const quantity = previousOrderData[itemNumber] || 0;
+
+                badge.textContent = quantity;
+                if (quantity > 0) {
+                    badge.classList.remove('not-ordered');
+                    badge.classList.add('has-ordered');
+                } else {
+                    badge.classList.remove('has-ordered');
+                    badge.classList.add('not-ordered');
+                }
+            });
+        }
+
+
+        function closeOrderDetailsModal() {
+           document.getElementById('orderDetailsModal').style.display = 'none';
+        }
+
+
+        function viewOrderDetails(orderId) {
+           const ordersData = JSON.parse('{{ orders_data|escapejs }}');
+           const order = ordersData.find(o => o.id === orderId);
+
+           if (order) {
+               let detailsHTML = `
+                   <div style="margin-bottom: 20px;">
+                       <h3>${order.order_number}</h3>
+                       <p><strong>Date:</strong> ${new Date(order.created_at).toLocaleDateString()}</p>
+                       <p><strong>Total Items:</strong> ${order.total_items}</p>
+                   </div>
+                   <div style="max-height: 300px; overflow-y: auto;">
+                       <table style="width: 100%; border-collapse: collapse;">
+                           <thead>
+                               <tr style="background: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+                                   <th style="padding: 8px; text-align: left;">Item #</th>
+                                   <th style="padding: 8px; text-align: left;">Product</th>
+                                   <th style="padding: 8px; text-align: center;">Qty</th>
+                               </tr>
+                           </thead>
+                           <tbody>
+               `;
+
+               order.items.forEach(item => {
+                   detailsHTML += `
+                       <tr style="border-bottom: 1px solid #dee2e6;">
+                           <td style="padding: 8px;">${item.item_number}</td>
+                           <td style="padding: 8px;">${item.product_name}</td>
+                           <td style="padding: 8px; text-align: center;">${item.quantity}</td>
+                       </tr>
+                   `;
+               });
+
+               detailsHTML += `
+                           </tbody>
+                       </table>
+                   </div>
+               `;
+
+               document.getElementById('orderDetailsContent').innerHTML = detailsHTML;
+               document.getElementById('orderDetailsModal').style.display = 'flex';
+           }
+        }
+
+
+        function showViewOrdersModal() {
+            console.log('inside showViewOrdersModal')
+            document.getElementById('viewOrdersModal').style.display = 'flex';
+        }
+
+
+        function closeViewOrdersModal() {
+            document.getElementById('viewOrdersModal').style.display = 'none';
+        }
+
+
+        function closeOrderDetailsModal() {
+            document.getElementById('orderDetailsModal').style.display = 'none';
+        }
+
+
+        // Function to open photo modal
+        function openPhotoModal(photoUrl, varietyName) {
+            const modal = document.getElementById('photoModal');
+            const image = document.getElementById('photoModalImage');
+            const title = document.getElementById('photoModalTitle');
+
+            image.src = photoUrl;
+            image.alt = varietyName;
+            title.textContent = varietyName;
+            modal.style.display = 'flex';
+        }
+
+
+        // Function to close photo modal
+        function closePhotoModal() {
+            const modal = document.getElementById('photoModal');
+            modal.style.display = 'none';
+        }
+
+
+        // Function to show verification modal for clearing order
         function showVerifyClearOrderModal() {
-            //console.log('inside showVerifyClearOrderModal function');
-            // Show the modal
-            var modal = document.getElementById('verifyClearOrder');
-            modal.style.display = 'block';
-
-            // Add an event listener to the "Submit" button inside the modal
-            var clearOrderSubmit= document.getElementById('submitClearOrder');
-            clearOrderSubmit.addEventListener('click', clearOrder);
-
+            const modal = document.getElementById('verifyClearOrder');
+            modal.style.display = 'flex';
         }
 
+
+        // Function to show logout verification
         function showLogoutVerification() {
-            //console.log('inside showLogoutVerification function');
-            // Show the modal
-            var modal = document.getElementById('verifyLogout');
-            modal.style.display = 'block';
-
-            // Add an event listener to the "Submit" button inside the modal
-            var logoutSubmit= document.getElementById('submitLogout');
-            logoutSubmit.addEventListener('click', logout);
-
+            const modal = document.getElementById('verifyLogout');
+            modal.style.display = 'flex';
         }
 
+
+        // Function to handle submit button click
         function handleSubmitButtonClick() {
             submitOrder(orderData);
         }
 
 
+        // Function to handle order success
         function handleOrderSuccess(submittedData) {
-            // Close the modal
             closeModal();
-            // console.log("-------------------------- Submitted Data ----------------------------");
-            // console.log(submittedData)
-
-
-            // call the pdf function
-            generateOrderPDF(submittedData);
-
-            // Clear the order
             clearOrder();
+            // generatePDF(submittedData)
+            // Optional: show a brief success message before reload
+            const successModal = document.getElementById('successModalOverlay');
+            successModal.style.display = 'flex';
 
-            // Show the success modal
-            var successModal = document.getElementById('successModalOverlay');
-            successModal.style.display = 'block';
-
-            // Remove the event listener to prevent it from firing again
-            var submitButtonModal = document.getElementById('modalSubmitButton');
-            submitButtonModal.removeEventListener('click', handleSubmitButtonClick);
-
+            // Wait briefly to show the success modal, then reload
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);  // 1 second delay for user feedback
         }
 
 
+        // Function to display order review modal
         function displayModal() {
-            //gather order data and calculate order total
-            var table = document.getElementById('product-table');
-            var rows = table.getElementsByTagName('tr');
-            var orderVars = [];
-            for (var i = 1; i < rows.length; i++) {  // Start from index 1 to skip the header row
-                var row = rows[i];
-                var itemNumber = row.querySelector('input').getAttribute('item-number');
-                var variety = row.querySelector('input').getAttribute('variety');
-                var quantity = parseInt(row.querySelector('input').value);
-                var vegType = row.querySelector('input').getAttribute('veg-type');
+            const table = document.getElementById('product-table');
+            const rows = table.getElementsByTagName('tr');
+            const orderVars = [];
+            orderData = {}; // Reset order data
+
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const input = row.querySelector('input');
+                const itemNumber = input.getAttribute('data-item-number');
+                const variety = input.getAttribute('data-variety');
+                const quantity = parseInt(input.value) || 0;
+                const vegType = input.getAttribute('data-veg-type');
 
                 if (quantity > 0) {
-                    // console.log(itemNumber, quantity);
                     orderData[itemNumber] = quantity;
                     orderVars.push({ variety, quantity, vegType });
-
                 }
+            }
+
+            if (orderVars.length === 0) {
+                showErrorMessage('Please add items to your order before submitting.');
+                return;
             }
 
             // Calculate the order total
-            var total = 0;
-            for (var itemNumber in orderData) {
+            let total = 0;
+            for (const itemNumber in orderData) {
                 total += orderData[itemNumber];
             }
-            var orderTotal = total * pktPrice;
+            const orderTotal = total * pktPrice;
 
-            // Display the order total in the modal
             document.getElementById('orderTotal').textContent = orderTotal.toFixed(2);
 
-            // Show the modal
-            var modal = document.getElementById('modalOverlay');
-            modal.style.display = 'block';
+            const modal = document.getElementById('modalOverlay');
+            modal.style.display = 'flex';
 
-            // Add an event listener to the "Submit" button inside the modal
-            var submitButtonModal = document.getElementById('modalSubmitButton');
-            submitButtonModal.addEventListener('click', handleSubmitButtonClick);
+            // Display ordered products
+            const orderedProductsContainer = document.getElementById('orderedProducts');
+            orderedProductsContainer.innerHTML = '<h3 style="margin-bottom: 15px;">Items in Your Order:</h3>';
+            orderVars.forEach(orderVar => {
+                const productDiv = document.createElement('div');
+                productDiv.style.cssText = 'padding: 10px; margin: 5px 0; background: #f8f9fa; border-radius: 8px; display: flex; justify-content: space-between;';
 
-            // Get the container for ordered products
-            var orderedProductsContainer = document.getElementById('orderedProducts');
-            // Clear previous content
-            orderedProductsContainer.innerHTML = '';
+                productDiv.innerHTML =
+                    `<span><strong>${orderVar.quantity}</strong> × ${orderVar.variety} (${orderVar.vegType})</span>
+                     <span style="color: #667eea; font-weight: 600;">${(orderVar.quantity * pktPrice).toFixed(2)}</span>`;
 
-            // Loop through orderVars to create a list of ordered products
-            for (var i = 0; i < orderVars.length; i++) {
-                var orderVar = orderVars[i];
-                var quantity = orderVar.quantity;
-
-                // Create a div to display product information
-                var productDiv = document.createElement('div');
-                productDiv.textContent = `${quantity} x ${orderVar.variety} (${orderVar.vegType})`;
                 orderedProductsContainer.appendChild(productDiv);
-            }
+            });
+
         }
 
 
-        // Colors the previously ordered items a different color
-        function checkPreviousItems() {
-            console.log('Inside checkPreviousItems function');
-            var previousItems = {{ previous_items|safe }};
-            var tableRows = document.querySelectorAll('.table-row');
-
-            tableRows.forEach(function(row) {
-                var itemNumberElement = row.querySelector('.input-field input[name="quantity"]');
-                if (itemNumberElement) {
-                    var itemNumber = itemNumberElement.getAttribute('item-number');
-                    // console.log(itemNumber);
-                    if (previousItems.includes(itemNumber.toString())) {
-                        // console.log('Item number found: ', itemNumber);
-                        row.classList.add('ordered-item');
-                    }
+        // Function to close modal
+        function closeModal() {
+            const modals = ['modalOverlay', 'successModalOverlay', 'verifyClearOrder', 'verifyLogout'];
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.style.display = 'none';
                 }
             });
-        }
-
-
-        function closeModal() {
-            //console.log('inside closeModal function');
-            var modal = document.getElementById('modalOverlay');
-            modal.style.display = 'none';
             orderData = {};
-            var modal = document.getElementById('successModalOverlay');
-            modal.style.display = 'none';
-            var modal = document.getElementById('verifyClearOrder');
-            modal.style.display = 'none';
-            var modal = document.getElementById('verifyLogout');
-            modal.style.display = 'none';
         }
 
 
@@ -837,135 +1240,49 @@
         }
 
 
-        async function generateOrderPDF(submittedData) {
+        function generatePDF(orderNumber) {
+            // First, get the order ID from the order number
+            // You'll need to make an AJAX call to get the order ID
 
-            const currentDate = new Date();
-            const formattedDate = currentDate.toLocaleDateString("en-US", {
-                year: "2-digit",   // Format the year as 2 digits
-                month: "2-digit",  // Format the month as 2 digits
-                day: "2-digit"     // Format the day as 2 digits
-            });
-
-            // Import jsPDF from the global object
-            const { jsPDF } = window.jspdf;
-
-            // Create a new PDF document
-            const doc = new jsPDF();
-
-            // Set the font and size for the title
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(16);
-            doc.text(`Uprising Seeds Order Confirmation - ${formattedDate}`, 105, 30, { align: "center" });
-            // doc.text("Order Confirmation", 105, 30, { align: "center" });
-
-            doc.line(20, 35, 190, 35);
-
-            // Table header for line items
-            doc.setFontSize(12);
-            doc.setFont("helvetica", "bold");
-            doc.text("Quantity", 20, 50);
-            doc.text("Variety", 50, 50);
-            doc.text("Veg Type", 120, 50);
-            doc.text("Total $", 170, 50);
-
-            // display the varieties, veg_types, qtys, and total $ of the items ordered.
-            // the submittedData that is passed in as a parameter is a dict, with item numbers (ints) as keys, and qtys as values
-            // the variety/veg_type can be looked up in a global dict called product_dict, which has item_numbers (ints) as keys
-            // and the values are two item lists, containing the variety and veg_type
-
-            let currentY = 60;
-            let totalPrice = 0.00;
-            const maxY = 270;
-            let rowCount = 0;
-
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(12);
-
-
-            // Loop through the submittedData to add the line items to the PDF
-            for (const [itemNumber, quantity] of Object.entries(submittedData)) {
-                // Look up the variety and veg_type in the global product_dict
-                const productDetails = product_dict[itemNumber];
-
-                if (productDetails) {
-                    const [variety, vegType] = productDetails;
-
-                    // Calculate total price (assuming you have a price-per-unit lookup or calculation)
-                    // Replace `getPriceForItem` with your actual logic for retrieving price
-
-                    const totalItemPrice = pktPrice * quantity;
-
-                    if (currentY > maxY) {
-                        doc.addPage(); // Add a new page
-                        currentY = 20; // Reset Y-position for the new page
-
-                        // Add the table headers again on the new page
-                        doc.setFont("helvetica", "bold");
-                        // doc.setFontSize(12);
-
-                        doc.text("Quantity", 20, currentY);
-                        doc.text("Variety", 50, currentY);
-                        doc.text("Veg Type", 120, currentY);
-                        doc.text("Total $", 170, currentY);
-
-                        currentY += 8; // Move down for the first row
-                    }
-
-                    // Alternate row background shading
-                    if (rowCount % 2 === 0) {
-                        doc.setFillColor(240, 240, 240); // Light gray
-                        doc.rect(20, currentY - 4, 170, 8, "F"); // Fill the background of the row
-                    }
-
-                    const textY = currentY + 2;
-
-                    // Add the item details to the PDF
-                    doc.setFont("helvetica", "normal");
-                    doc.text(quantity.toString(), 20, textY);
-                    doc.text(variety, 50, textY);
-                    doc.text(vegType, 120, textY);
-                    doc.text(totalItemPrice.toFixed(2), 170, textY);
-
-                    totalPrice += totalItemPrice;
-                    // Move the Y-position down for the next line
-                    currentY += 8;
-                    rowCount++;
+            fetch(`/orders/api/get-order-id/${orderNumber}/`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken') // Django CSRF token
                 }
-            }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.order_id) {
+                    // Open the PDF in a new tab
+                    const pdfUrl = `/orders/generate-pdf/${data.order_id}/`;
+                    console.log('Trying to open PDF URL:', pdfUrl); // Add this line
+                    window.open(pdfUrl, '_blank');
+                } else {
+                    alert('Order not found');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error generating PDF');
+            });
+        }
 
-            // Add the final total price at the bottom of the last page
-            if (currentY + 20 > maxY) {
-                // Not enough space for the total, add a new page
-                doc.addPage();
-                currentY = 20; // Reset Y-position for the new page
-            }
-
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(14); // Slightly larger font for the total
-            currentY += 2; // Add some space before the total
-            doc.text("Est. Sub-Total:", 140, currentY);
-            doc.text(`$${totalPrice.toFixed(2)}`, 180, currentY);
-            currentY += 8;
-            doc.text("Est. Shipping", 140, currentY);
-            doc.text("TBD", 180, currentY);
-
-
-            // Generate a Blob URL for the PDF and open it in a new tab
-            const pdfBlob = doc.output("blob");
-            const pdfURL = URL.createObjectURL(pdfBlob);
-            window.open(pdfURL, "_blank");
+        // Alternative: If you can modify the modal to pass order ID directly
+        function generatePDFById(orderId) {
+            const pdfUrl = `/generate-pdf/${orderId}/`;
+            window.open(pdfUrl, '_blank');
         }
 
 
+        // Function to get CSRF cookie
         function getCookie(name) {
-            var cookieValue = null;
+            let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = cookies[i].trim();
-                    // Check if the cookie name matches
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
                     if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        // Get the cookie value
                         cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                         break;
                     }
@@ -974,258 +1291,281 @@
             return cookieValue;
         }
 
-        // Function to sort the table rows by category, veg_type, and sub_type
+
+        // Function to sort table
         function sortTable() {
-            var table = document.getElementById("product-table");
-            var rows = table.getElementsByTagName("tr");
+            const table = document.getElementById("product-table");
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.getElementsByTagName("tr"));
 
+            const categoryOrder = {
+                'vegetables': 1,
+                'herbs': 2,
+                'flowers': 3
+            };
 
-            // Convert rows to an array for sorting
-            var rowsArray = Array.prototype.slice.call(rows, 1); // Exclude header row
+            rows.sort(function(row1, row2) {
+                const category1 = row1.getAttribute('data-category').toLowerCase();
+                const category2 = row2.getAttribute('data-category').toLowerCase();
+                const vegType1 = row1.cells[3].textContent;
+                const vegType2 = row2.cells[3].textContent;
+                const subType1 = row1.cells[4].textContent;
+                const subType2 = row2.cells[4].textContent;
 
-                var categoryOrder = {
-                    'vegetables': 1,
-                    'herbs': 2,
-                    'flowers': 3
-                };
-
-            // Sort the rows based on category, veg_type, and sub_type
-            rowsArray.sort(function(row1, row2) {
-                var category1 = row1.cells[2].textContent.toLowerCase();
-                var category2 = row2.cells[2].textContent.toLowerCase();
-                var vegType1 = row1.cells[3].textContent;
-                var vegType2 = row2.cells[3].textContent;
-                var subType1 = row1.cells[4].textContent;
-                var subType2 = row2.cells[4].textContent;
-
-
-                // Compare based on the custom order for 'category'
                 if (categoryOrder[category1] !== categoryOrder[category2]) {
                     return categoryOrder[category1] - categoryOrder[category2];
                 }
-                // if (category1 !== category2) {
-                //     return category1.localeCompare(category2);
-                // }
                 if (vegType1 !== vegType2) {
                     return vegType1.localeCompare(vegType2);
                 }
                 return subType1.localeCompare(subType2);
             });
 
-            // Reorder the table rows based on the sorted array
-            for (var i = 0; i < rowsArray.length; i++) {
-                table.appendChild(rowsArray[i]);
-            }
+            rows.forEach(row => tbody.appendChild(row));
 
-            const inputFields = document.querySelectorAll('.input-field input');
+            // Update tab indices
+            const inputFields = document.querySelectorAll('.quantity-input');
             inputFields.forEach((input, index) => {
                 input.tabIndex = index + 1;
             });
         }
 
 
-        // Call the sortTable function when the page loads
-        window.onload = function() {
-            console.log("inside window.onload");
-            sortTable();
-            checkPreviousItems();
-
-            // Added this to set the dropdown to show previously ordered items by default
-            var dropdown = document.getElementById("showAll-dropdown");
-            var previous_items = {{ previous_items|safe }};
-
-            console.log("previous items");
-            console.log(previous_items);
-            // Check if the list of previously ordered items is empty
-            if (previous_items && previous_items.length > 0) {
-                dropdown.value = "prevItems"; // Set to "Previously Ordered" if the list is not empty
-            } else {
-                dropdown.value = ""; // Set to "All Items" if the list is empty
-            }
-
-            // dropdown.value = "prevItems";
-            filterTable();
-
-        };
-
-
-        function navigateToPhoto(event) {
-
-            event.preventDefault(); // Prevent the default link behavior
-
-            // Get the photo link URL from the data-photolink attribute
-            const photoLink = event.currentTarget.getAttribute('data-photolink');
-
-            // Open the photo in a new tab
-            window.open(photoLink, '_blank');
-
-        }
-
-        // Add an event listener to the drop-down menu to trigger filtering when the value changes
-        // document.getElementById('category-filter').addEventListener('change', filterTable);
-
-
-        // Function to handle dropdown selection change for viewing new/previously ordered items
-        function handleDropdownChange() {
-            filterTable();
-        }
-
-
-        // Function to filter the table rows based on the selected category
+        // Function to filter table
         function filterTable() {
-            console.log('inside filterTable function');
             const categoryFilter = document.getElementById('category-filter');
             const selectedCategory = categoryFilter.value.toLowerCase();
+            const showAllDropdown = document.getElementById('showAll-dropdown');
+            const selectedOption = showAllDropdown.value;
 
-            var showAllDropdown = document.getElementById('showAll-dropdown');
-            var selectedOption = showAllDropdown.options[showAllDropdown.selectedIndex].value;
+            const rows = document.querySelectorAll('.table-row');
 
-            const table = document.getElementById('product-table');
-            const rows = table.getElementsByTagName('tr');
+            rows.forEach(row => {
+                const categoryCell = row.getAttribute('data-category').toLowerCase();
+                const badge = row.querySelector('.prev-ordered-badge');
+                const hasBeenOrdered = badge.classList.contains('has-ordered');
 
-            for (let i = 1; i < rows.length; i++) { // Start from index 1 to skip the header row
-                const row = rows[i];
-                const categoryCell = row.cells[2].textContent.toLowerCase();
+                let showRow = true;
 
-                if (selectedCategory === '' || categoryCell === selectedCategory || selectedCategory === 'all') {
-                    if (selectedOption === "newItems") {
-                        if (row.classList.contains("ordered-item")) {
-                            row.style.display = 'none';
-                        } else {
-                            row.style.display = 'table-row';
-                        }
-                    } else if (selectedOption === "prevItems") {
-                        if (row.classList.contains("ordered-item")) {
-                            row.style.display = 'table-row';
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    } else {
-                        row.style.display = 'table-row';
-                    }
-                    // row.style.display = 'table-row';
-                } else {
-                    row.style.display = 'none';
+                // Category filter
+                if (selectedCategory && categoryCell !== selectedCategory) {
+                    showRow = false;
                 }
-            }
+
+                // Previous order filter
+                if (selectedOption === "newItems" && hasBeenOrdered) {
+                    showRow = false;
+                } else if (selectedOption === "prevItems" && !hasBeenOrdered) {
+                    showRow = false;
+                }
+
+                row.style.display = showRow ? 'table-row' : 'none';
+            });
         }
-        // Add an event listener to the drop-down menu to trigger filtering when the value changes
-        document.getElementById('category-filter').addEventListener('change', filterTable);
 
-        // Add event listener for dropdown change
-        document.getElementById("showAll-dropdown").addEventListener("change", handleDropdownChange);
 
-        // Function to round a number to the nearest multiple of 5
-        function roundToNearestMultipleOfFive(value) {
-            return Math.round(value / 5) * 5;
-        }
-
-        // Function to handle input in the input field and round the value when focus is lost (blur event)
+        // Function to handle input changes
         function handleInput(event) {
-            //console.log('inside handleInput function');
             const input = event.target;
-            // Check if the Enter key is pressed or if the input field loses focus
             if (event.type === 'keydown' && event.key === 'Enter' || event.type === 'blur') {
-                const originalValue = parseInt(input.value, 10);
-
-                // Check if the input is a valid number
-                if (!isNaN(originalValue)) {
-                    // Round the value to the nearest multiple of 5
-                    const roundedValue = roundToNearestMultipleOfFive(originalValue);
-
-                    // Update the input field value with the rounded value
-                    input.value = roundedValue;
-                }
+                const originalValue = parseInt(input.value, 10) || 0;
+                const roundedValue = Math.round(originalValue / 5) * 5;
+                input.value = Math.max(0, roundedValue);
             }
+            updateUniqueItemCount();
         }
 
 
-        // Function to clear the order form
+        // Function to clear order
         function clearOrder() {
             orderData = {};
-            //console.log('inside clearOrder function');
-            const inputFields = document.querySelectorAll('.input-field input');
-            inputFields.forEach((input) => {
+            const inputFields = document.querySelectorAll('.quantity-input');
+            inputFields.forEach(input => {
                 input.value = 0;
             });
-            //update unique item count
-            updateUniqueItemCount()
-
-            // call closeModal function
+            updateUniqueItemCount();
             closeModal();
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // console.log('DOM loaded');
-            var logoutButton = document.getElementById('logout-button');
-            var logoutUrl = '{% url "logout" %}';
-            //console.log(logoutUrl);
-            logoutButton.setAttribute('data-logout-url', logoutUrl);
-            logoutButton.addEventListener('click', function() {
-                // console.log('logout clicked');
-                showLogoutVerification();
-            });
 
-        });
-
-        function logout() {
-            //console.log('inside logout function');
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', '{% url "logout" %}', true); // Update the URL as needed
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
-
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    // Successfully logged out
-                    window.location.href = '{% url "login" %}'; // Redirect to the login page
-                } else {
-                    console.error('Error: ' + xhr.status);
-                    // Handle error
-                }
-            };
-
-            xhr.send();
-        }
-
-        // Show an error message.... when product no longer available?
+        // Function to show error message
         function showErrorMessage(message) {
-            const errorMessage = document.querySelector('.error-message');
+            const errorMessage = document.getElementById('errorMessage');
             const errorText = document.getElementById('error-text');
-            const closeError = document.getElementById('close-error');
-
-            // Set the error message text
             errorText.textContent = message;
-
-            // Display the error message
             errorMessage.style.display = 'block';
 
-
-            // Add an event listener to close the error message
-            closeError.addEventListener('click', function (event) {
-                event.preventDefault(); // Prevent the default button behavior
-                errorMessage.style.display = 'none'; // Close the error message
-            });
-
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                closeErrorMessage();
+            }, 5000);
         }
 
 
-        // Event listeners to the input fields for manual input, Enter key press, and focus loss (blur)
-        const inputFields = document.querySelectorAll('.input-field input');
-        inputFields.forEach((input) => {
-            // input.addEventListener('input', handleInput); // Add the input event listener for manual input
-            input.addEventListener('input', function (event) {
-                handleInput(event); // Add the input event listener for manual input
-                updateUniqueItemCount(input); // Update unique item count when quantity changes
+        // Function to close error message
+        function closeErrorMessage() {
+                document.getElementById('errorMessage').style.display = 'none';
+            }
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Dashboard loaded');
+
+            const previousItems = {{ previous_items|safe }};
+            const hasPreviousItems = previousItems && Object.keys(previousItems).length > 0;
+
+            // Logout functionality
+            function logout() {
+                console.log('Logout function called'); // Debug log
+
+                // Create a form and submit it to Django's logout URL
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = window.logoutUrl || '/accounts/logout/'; // Correct path based on your URLs
+
+                // Add CSRF token - try multiple ways to find it
+                let csrfToken = null;
+                const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+                if (csrfInput) {
+                    csrfToken = csrfInput.value;
+                } else {
+                    // Try to get from cookie if available
+                    const cookies = document.cookie.split(';');
+                    for (let cookie of cookies) {
+                        const [name, value] = cookie.trim().split('=');
+                        if (name === 'csrftoken') {
+                            csrfToken = value;
+                            break;
+                        }
+                    }
+                }
+
+                console.log('CSRF token found:', csrfToken); // Debug log
+
+                if (csrfToken) {
+                    const csrfHidden = document.createElement('input');
+                    csrfHidden.type = 'hidden';
+                    csrfHidden.name = 'csrfmiddlewaretoken';
+                    csrfHidden.value = csrfToken;
+                    form.appendChild(csrfHidden);
+                }
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+
+            // Logout button
+            const logoutButton = document.getElementById('logout-button');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', showLogoutVerification);
+            }
+
+            // Filter dropdowns
+            const categoryFilter = document.getElementById('category-filter');
+            const showAllDropdown = document.getElementById('showAll-dropdown');
+            if (categoryFilter) {
+                categoryFilter.addEventListener('change', filterTable);
+            }
+            if (showAllDropdown) {
+                showAllDropdown.addEventListener('change', filterTable);
+            }
+
+            // Modal submit button
+            const modalSubmitButton = document.getElementById('modalSubmitButton');
+            if (modalSubmitButton) {
+                modalSubmitButton.addEventListener('click', handleSubmitButtonClick);
+            }
+
+            // Clear order button
+            const submitClearOrder = document.getElementById('submitClearOrder');
+            if (submitClearOrder) {
+                submitClearOrder.addEventListener('click', clearOrder);
+            }
+
+            // Logout submit button - use event delegation in case modal loads later
+            const submitLogout = document.getElementById('submitLogout');
+            if (submitLogout) {
+                console.log('Found submitLogout button, attaching event'); // Debug log
+                submitLogout.addEventListener('click', function(e) {
+                    console.log('Logout button clicked'); // Debug log
+                    e.preventDefault();
+                    logout();
+                });
+            } else {
+                console.log('submitLogout button not found'); // Debug log
+                // Use event delegation as backup
+                document.addEventListener('click', function(e) {
+                    if (e.target && e.target.id === 'submitLogout') {
+                        console.log('Logout button clicked via delegation'); // Debug log
+                        e.preventDefault();
+                        logout();
+                    }
+                });
+            }
+
+            // Input field events
+            const inputFields = document.querySelectorAll('.quantity-input');
+            inputFields.forEach(input => {
+                input.addEventListener('input', handleInput);
+                input.addEventListener('keydown', handleInput);
+                input.addEventListener('blur', handleInput);
             });
 
-            input.addEventListener('keydown', handleInput); // Add the keydown event listener to handle Enter key press
-            input.addEventListener('blur', handleInput); // Add the blur event listener to handle focus loss
+            // Initialize page
+            sortTable();
+            populatePreviousOrders();
+            updateUniqueItemCount();
+
+            requestAnimationFrame(() => {
+                console.log('First RAF: setting dropdowns');
+
+                if (categoryFilter) {
+                    categoryFilter.value = "";
+                }
+
+                if (hasPreviousItems && showAllDropdown) {
+                    showAllDropdown.value = "prevItems";
+                }
+
+                requestAnimationFrame(() => {
+                    console.log('Second RAF: filtering table');
+                    filterTable();
+                });
+            });
+
+            // Close modals when clicking outside
+            document.addEventListener('click', function(event) {
+                const modals = document.querySelectorAll('.modal-overlay');
+                modals.forEach(modal => {
+                    if (event.target === modal) {
+                        if (modal.id === 'photoModal') {
+                            closePhotoModal();
+                        } else if (modal.id === 'viewOrdersModal') {
+                        closeViewOrdersModal();  // ADD THIS
+                        } else if (modal.id === 'orderDetailsModal') {
+                            closeOrderDetailsModal();  // ADD THIS
+                        } else {
+                            closeModal();
+                        }
+                    }
+                });
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(event) {
+                // Escape key closes modals and error messages
+                if (event.key === 'Escape') {
+                    closeModal();
+                    closePhotoModal();
+                    closeErrorMessage();
+                    closeViewOrdersModal();
+                    closeOrderDetailsModal();
+                }
+            });
+
+            console.log('All event listeners attached');
         });
 
-
     </script>
-
 </body>
 </html>
-

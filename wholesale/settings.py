@@ -10,7 +10,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 from decouple import config
-# from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,6 +25,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['uprising.pythonanywhere.com']
 
+SITE_MAINTENANCE_MODE = True
 
 # Application definition
 
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "orders.apps.OrdersConfig",
     "rest_framework",
     "rest_framework.authtoken",
+    'office.apps.OfficeConfig',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +52,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # "wholesale.middleware.MaintenanceModeMiddleware",
 ]
 
 ROOT_URLCONF = "wholesale.urls"
@@ -89,7 +91,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -107,9 +108,6 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
-
-
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
@@ -137,7 +135,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_URL = '/accounts/'
+LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/accounts/dashboard/'
 
 #AUTH_USER_MODEL = 'stores.StoreUser'
@@ -146,3 +144,7 @@ LOGIN_REDIRECT_URL = '/accounts/dashboard/'
 CSP_DEFAULT_SRC = ("'self'",)
 CSP_SCRIPT_SRC = ("'self'", "https://code.jquery.com")
 CSP_CONNECT_SRC = ("'self'", "http://localhost:8000")  # Add your domain or source here
+
+CURRENT_ORDER_YEAR = 26
+PACKET_PRICE = 2.40
+

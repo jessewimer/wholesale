@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventory & Germination</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 40px;
+            background-color: #f9f9f9;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .search-container,
+            .search-input,
+            .autocomplete-list {
+                box-sizing: border-box;
+        }
+        .search-container {
+            width: 300px;
+            position: relative;
+            border-bottom: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            outline: none;
+            background-color: #fff;
+            box-sizing: border-box;
+            border-bottom: none;
+        }
+
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 300px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 0 0 0 0;
+            max-height: 150px;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+        }
+
+        .autocomplete-item {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .autocomplete-item:hover {
+            background-color: #eee;
+        }
+
+        .nav-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .nav-dropdown button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 16px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 150px;
+        }
+
+        .nav-dropdown button:hover {
+            background-color: #0056b3;
+        }
+
+        .nav-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 150px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            border-radius: 6px;
+            z-index: 1001;
+        }
+
+        .nav-dropdown-content a {
+            color: black;
+            padding: 10px 14px;
+            text-decoration: none;
+            display: block;
+            border-bottom: 1px solid #eee;
+        }
+
+        .nav-dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .nav-dropdown-content.show {
+            display: block;
+        }
+
+        .section {
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        .styled-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 1em;
+          font-family: sans-serif;
+          font-size: 14px;
+          box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .styled-table thead {
+          background-color: #f0f0f0;
+          color: #333;
+          font-weight: bold;
+        }
+
+        .styled-table th,
+        .styled-table td {
+          padding: 10px;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+        }
+
+        .styled-table tbody tr:hover {
+          background-color: #f9f9f9;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+      <div class="search-container">
+        <input
+          type="text"
+          class="search-input"
+          id="crop-search"
+          placeholder="Search Crop..."
+          autocomplete="off"
+        >
+        <div id="autocomplete-results" class="autocomplete-list"></div>
+      </div>
+
+      <div class="nav-dropdown" id="navDropdown">
+        <button id="navButton">Menu ▼</button>
+        <div class="nav-dropdown-content" id="navMenu">
+          <a href="/office/dashboard">Variety</a>
+          <a href="/office/logout/">Logout</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="results-section">
+      <h2>Inventory & Germination Summary</h2>
+      <table id="products-table" class="styled-table">
+        <thead>
+          <tr>
+            <th>Crop</th>
+            <th>Variety</th>
+            <th>Current Inv</th>
+            <th>Previous Inv</th>
+            <th>Difference</th>
+            <th>Germ 23</th>
+            <th>Germ 24</th>
+            <th>Germ 25</th>
+          </tr>
+        </thead>
+        <tbody id="products-table-body">
+          <!-- Rows will be inserted dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("crop-search");
+  const resultsBox = document.getElementById("autocomplete-results");
+  const navButton = document.getElementById("navButton");
+  const navMenu = document.getElementById("navMenu");
+  const tableBody = document.getElementById("products-table-body");
+
+  let crops = [];
+
+  // Load crops for autocomplete
+  fetch("/office/crops-json/")
+    .then(response => {
+      if (!response.ok) throw new Error("Failed to fetch crops list");
+      return response.json();
+    })
+    .then(data => {
+      crops = data;
+    })
+    .catch(error => {
+      console.error("Error loading crops:", error);
+    });
+
+  // Handle input for autocomplete
+  searchInput.addEventListener("input", () => {
+    const query = searchInput.value.trim().toLowerCase();
+    resultsBox.innerHTML = "";
+    if (!query) return;
+
+    const matches = crops
+      .filter(crop => crop.name && crop.name.toLowerCase().includes(query))
+      .slice(0, 10);
+
+    matches.forEach(match => {
+      const item = document.createElement("div");
+      item.classList.add("autocomplete-item");
+      item.textContent = match.name;
+      resultsBox.appendChild(item);
+    });
+  });
+
+  // Use event delegation for autocomplete selection
+  resultsBox.addEventListener("click", (e) => {
+    if (e.target.classList.contains("autocomplete-item")) {
+      const selectedCrop = e.target.textContent;
+      searchInput.value = selectedCrop;
+      resultsBox.innerHTML = "";
+      updateProductsTable(selectedCrop);
+    }
+  });
+
+  // Toggle nav menu
+  navButton.addEventListener("click", (e) => {
+    e.stopPropagation();
+    navMenu.classList.toggle("show");
+  });
+
+  document.addEventListener("click", () => {
+    if (navMenu.classList.contains("show")) {
+      navMenu.classList.remove("show");
+    }
+  });
+
+  function updateProductsTable(crop) {
+    const encodedCrop = encodeURIComponent(crop);
+    const endpoint = `/office/inventory-germination/${encodedCrop}/`;
+
+    fetch(endpoint)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Failed to load data: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        tableBody.innerHTML = "";
+
+        if (data.length === 0) {
+          const tr = document.createElement("tr");
+          const td = document.createElement("td");
+          td.colSpan = 8;
+          td.textContent = "No products found for this crop.";
+          tr.appendChild(td);
+          tableBody.appendChild(tr);
+          return;
+        }
+
+        data.forEach(product => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${product.veg_type || "-"}</td>
+            <td>${product.variety || "-"}</td>
+            <td>${product.current_inventory || "-"}</td>
+            <td>${product.previous_inventory || "-"}</td>
+            <td>${product.difference || "-"}</td>
+            <td>${product.germ_23 || "-"}</td>
+            <td>${product.germ_24 || "-"}</td>
+            <td>${product.germ_25 || "-"}</td>
+          `;
+          tableBody.appendChild(tr);
+        });
+      })
+      .catch(error => {
+        console.error("Error loading product data:", error);
+        tableBody.innerHTML = `
+          <tr><td colspan="8">Error loading product data. Please try again later.</td></tr>
+        `;
+      });
+  }
+});
+</script>
+
+
+</body>
+</html>

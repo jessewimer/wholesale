@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Office Login</title>
+</head>
+<body>
+    <h2>Office Login</h2>
+
+    <form method="post" action="{% url 'office_login' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit">Log in</button>
+    </form>
+
+    {% if form.errors %}
+        <p style="color:red;">Invalid username or password.</p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Office Dashboard</title>
+    <style>
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between; /* search left, nav right */
+            align-items: center;
+            width: 100%;   /* full width */
+            padding: 0 20px; /* optional side padding */
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: sans-serif;
+            margin: 40px;
+            background-color: #f9f9f9;
+        }
+
+        .search-container,
+            .search-input,
+            .autocomplete-list {
+                box-sizing: border-box;
+        }
+
+        .search-container {
+            width: 300px;
+            position: relative;
+            border-bottom: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-bottom: none;
+            outline: none;
+            background-color: #fff;
+        }
+
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 300px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 0 0 0 0;
+            max-height: 150px;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+        }
+
+        .autocomplete-item {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .autocomplete-item:hover {
+            background-color: #eee;
+        }
+
+        .section {
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            margin-top: 0;
+            font-size: 1.2em;
+            color: #333;
+        }
+        input.search-input {
+            box-shadow: none;
+            background-color: white;
+        }
+
+        /* Navigation dropdown container */
+        .nav-dropdown {
+            position: relative;
+            display: inline-block;
+            margin-left: auto;
+        }
+
+        /* Navigation button */
+        .nav-dropdown button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 16px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 150px;
+        }
+
+      .nav-dropdown button:hover {
+        background-color: #0056b3;
+      }
+
+      /* Dropdown menu */
+      .nav-dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0; /* align right */
+        background-color: white;
+        min-width: 150px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        border-radius: 6px;
+        z-index: 1001;
+      }
+
+      .nav-dropdown-content a {
+        color: black;
+        padding: 10px 14px;
+        text-decoration: none;
+        display: block;
+        border-bottom: 1px solid #eee;
+      }
+
+      .nav-dropdown-content a:last-child {
+        border-bottom: none;
+      }
+
+      .nav-dropdown-content a:hover {
+        background-color: #f1f1f1;
+      }
+
+      /* Show dropdown on button click */
+      /*.nav-dropdown.show .nav-dropdown-content {*/
+      /*  display: block;*/
+      /*}*/
+
+
+        .nav-dropdown-content.show {
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+      <div class="search-container">
+        <input
+          type="text"
+          class="search-input"
+          id="variety-search"
+          placeholder="Search Variety..."
+          autocomplete="off"
+        >
+        <div id="autocomplete-results" class="autocomplete-list"></div>
+      </div>
+
+      <div class="nav-dropdown" id="navDropdown">
+        <button id="navButton" aria-haspopup="true" aria-expanded="false" aria-controls="navMenu">
+          Menu ▼
+        </button>
+        <div class="nav-dropdown-content" id="navMenu" role="menu" aria-labelledby="navButton">
+          <a href="/office/inventory-germination" role="menuitem">Inv/Germ</a>
+          <a href="/office/logout/" role="menuitem">Logout</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="variety-section">
+        <h2>Variety Info</h2>
+        <p id="variety-details">[Select a variety above to see info]</p>
+    </div>
+
+    <div class="section" id="usage-section">
+        <h2>Estimated Usage</h2>
+        <p>[Usage data will appear here]</p>
+    </div>
+
+    <div class="section" id="lots-section">
+        <h2>Lots</h2>
+        <p>[Lots data will appear here]</p>
+    </div>
+
+    <div class="section" id="products-section">
+        <h2>Products</h2>
+        <p>[Products data will appear here]</p>
+    </div>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("variety-search");
+    const resultsBox = document.getElementById("autocomplete-results");
+    const navButton = document.getElementById("navButton");
+    const navMenu = document.getElementById("navMenu");
+    let varieties = [];
+
+    // Fetch the variety data from Django endpoint
+    fetch("/office/varieties-json/")
+        .then(res => res.json())
+        .then(data => {
+            varieties = data;
+            console.log("Varieties loaded:", varieties);
+        })
+        .catch(err => console.error("Failed to load varieties:", err));
+
+    searchInput.addEventListener("input", function () {
+        const query = this.value.toLowerCase();
+        resultsBox.innerHTML = "";
+
+        if (!query) return;
+
+        const matches = varieties
+            .filter(v => v.name && v.name.toLowerCase().includes(query))
+            .slice(0, 10);
+
+        matches.forEach(match => {
+            const div = document.createElement("div");
+            div.classList.add("autocomplete-item");
+            div.textContent = match.name;
+
+            div.addEventListener("click", () => {
+                searchInput.value = match.name;
+                resultsBox.innerHTML = "";
+
+                document.getElementById("variety-details").textContent = `Details for ${match.name}...`;
+            });
+
+            resultsBox.appendChild(div);
+        });
+    });
+
+    // --- Navigation Dropdown Script ---
+
+
+    // Toggle dropdown on button click
+    navButton.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent event bubbling
+        navMenu.classList.toggle("show");
+    });
+
+    // Close dropdown if clicked outside
+    document.addEventListener("click", () => {
+        if (navMenu.classList.contains("show")) {
+            navMenu.classList.remove("show");
+        }
+    });
+});
+
+</script>
+
+</body>
+</html>

@@ -1,7 +1,8 @@
 import os
 import django
 import sys
-
+import csv
+from prettytable import PrettyTable
 # Get the current directory path
 current_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -15,32 +16,56 @@ sys.path.append(project_path)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "wholesale.settings")
 django.setup()
 
-from stores.models import Store
-
+from stores.models import Store, StoreProduct
+from products.models import Product
 from django.contrib.auth.models import User
 from django.db.models import Count
-
-def avail_products_csv(store_num):
-    import csv
+from django.db import connection
 
 
-    store = Store.objects.get(store_number=store_num)
-    print(store.name)
-    csv_filename = f"{store.name}'s Avail Products.csv"
+# Sets all storeproduct entries as 'false' so all store have no product available
+def reset_storeproduct_table():
+    # Delete all StoreProduct records
+    StoreProduct.objects.all().delete()
+    print("Deleted all StoreProduct records.")
 
-    avail_products = store.available_products
+    # Reset auto-increment for MySQL
+    with connection.cursor() as cursor:
+        cursor.execute("ALTER TABLE stores_storeproduct AUTO_INCREMENT = 1;")
+    print("Reset StoreProduct AUTO_INCREMENT.")
+
+    # Then create all combinations like before
+    stores = Store.objects.all()
+    products = Product.objects.all()
+
+    to_create = []
+    for store in stores:
+        for product in products:
+            to_create.append(StoreProduct(store=store, product=product, is_available=False))
+
+    StoreProduct.objects.bulk_create(to_create)
+    print(f"Created {len(to_create)} StoreProduct entries with is_available=False.")
 
 
-    with open(csv_filename, mode='w', newline='') as csv_file:
-        writer = csv.writer(csv_file)
-        # writer.writeheader()
+def print_storeproduct_table():
 
-        for item_number, availability in avail_products.items():
-            if availability:  # Only write to CSV if the product is available (True)
-                writer.writerow([item_number])
+    # Create table with headers
+    table = PrettyTable()
+    table.field_names = ["Store Number", "Store Name", "Product Item #", "Product Name", "Available"]
 
-    print(f"CSV file '{csv_filename}' has been created with available products.")
+    # Query all StoreProduct entries with related store and product
+    storeproducts = StoreProduct.objects.select_related('store', 'product').order_by('store__store_number', 'product__item_number')
 
+    for sp in storeproducts:
+        table.add_row([
+            sp.store.store_number,
+            sp.store.name,
+            sp.product.item_number,
+            str(sp.product),
+            "Yes" if sp.is_available else "No"
+        ])
+
+    print(table)
 
 
 def delete_duplicate_stores():
@@ -55,24 +80,11 @@ def delete_duplicate_stores():
         for store in duplicate_stores[1:]:
             store.delete()
 
-
     # Retrieve all store objects and print their primary keys
     stores = Store.objects.all()
 
     for store in stores:
         print(f"Key: {store.pk}: {store.name}")
-
-# resets each store's total orders to 0
-def reset_stores():
-    stores = Store.objects.all()
-    for store in stores:
-        store.total_orders = 00
-        store.current_order = 00
-        store.last_order_date = None
-        store.total_num_packets = 0
-        store.save()
-    print('The following attributes has been zeroed out for all store:')
-    print("Total Orders\nCurrent Orders\nLast Order Date\nTotal Number of Pkts")
 
 
 # Prints a list of all store numbers and names
@@ -80,29 +92,6 @@ def view_stores():
     stores = Store.objects.all()
     for store in stores:
         print(store.store_number, " ", store.name)
-
-
-# Sets all products as 'false' for every store
-def set_store_products():
-    # Retrieve all store objects
-    stores = Store.objects.all()
-
-    # Create a dictionary with item numbers as keys and True as values
-    # item_numbers = {num: True for num in range(101, 424)}
-    item_numbers = {num: False for num in range(101, 444)}
-    for store in stores:
-        store.available_products = item_numbers
-        store.save()
-
-    print("All products for all stores have been set to false")
-
-# Prints out all store names and available products for each store
-def view_stores_products():
-    # Retrieve all store objects
-    stores = Store.objects.all()
-
-    for store in stores:
-        print(store.name, ": ", store.available_products)
 
 
 def create_store_instance(store_num, username, password, email, name):
@@ -133,49 +122,6 @@ def create_store_instance(store_num, username, password, email, name):
     print(f"Store '{name}' has been created successfully.")
 
 
-def set_store_products_csv(store_num, filename):
-    import csv
-
-    store = Store.objects.get(store_number=store_num)
-    print(store.name)
-    csv_file_path = f"{filename}.csv"
-
-    # Initialize an empty list to store the contents
-    true_product_numbers = []
-
-    # Read the CSV file and populate the list
-    with open(csv_file_path, 'r', newline='') as csvfile:
-        csv_reader = csv.reader(csvfile)
-        for row in csv_reader:
-            # Assuming the numbers are in the first column of the CSV
-            number = int(row[0])
-            true_product_numbers.append(number)
-
-        print("length: ", len(true_product_numbers))
-        unique_item_numbers_count = len(set(true_product_numbers))
-        print("unique item count ", unique_item_numbers_count)
-        product_availabilities = {product_number: product_number in true_product_numbers for product_number in range(101, 444)}
-
-        # Assign the product_availabilities dictionary to the store's available_products field
-        store.available_products = product_availabilities
-
-        store.save()
-
-
-def view_store_products(store_num):
-    from products.models import Product
-    store = Store.objects.get(store_number=store_num)
-
-    available_item_numbers = [item_number for item_number, availability in store.available_products.items() if availability]
-    for item in available_item_numbers:
-        print(item)
-
-    # matching_products = Product.objects.filter(item_number__in=available_item_numbers)
-
-    # for product in matching_products:
-    #     print(f"Veg type: {product.veg_type}, Variety: {product.variety}")
-
-
 def set_store_slots(store_num, slot_num):
     store = Store.objects.get(store_number=store_num)
     store.slots = slot_num
@@ -203,81 +149,73 @@ def check_slots(store_num):
     store = Store.objects.get(store_number = store_num)
     print(store.name, " 's slots: ", store.slots)
 
-def add_item_to_store(store_num, item_num):
-    store = Store.objects.get(store_number=store_num)
 
-    # Access the available_products dictionary
-    available_products = store.available_products
+def set_items_availability(store_nums, item_nums=None, availability=True, csv_filename=None):
+    # Normalize store_nums to list
+    if isinstance(store_nums, int):
+        store_nums = [store_nums]
 
-    # Add the new item to the dictionary
-    available_products[item_num] = True
-
-    # Assign the modified dictionary back to store.available_products
-    store.available_products = available_products
-
-    # Save the changes to the store instance
-    store.save()
-
-    print(f"{item_num} has been added to {store.name}'s availabilities")
-
-def add_item_to_stores(store_nums, item_num):
-    # Iterate over each store number in the list
-    for store_num in store_nums:
+    # Load item_nums from CSV if filename given
+    if csv_filename:
+        csv_path = os.path.join(os.path.dirname(__file__), 'csv', csv_filename)
         try:
-            # Get the store by its store number
-            store = Store.objects.get(store_number=store_num)
+            with open(csv_path, newline='') as csvfile:
+                reader = csv.reader(csvfile)
+                item_nums = []
+                for row in reader:
+                    for val in row:
+                        try:
+                            item_nums.append(int(val.strip()))
+                        except ValueError:
+                            print(f"Skipping non-integer value in CSV: {val}")
+            print(f"Loaded {len(item_nums)} total item numbers from {csv_filename}")
+            print(f"Unique item numbers loaded: {len(set(item_nums))}")
+        except FileNotFoundError:
+            print(f"CSV file not found: {csv_path}")
+            return
+    else:
+        # Normalize item_nums to list if given directly
+        if isinstance(item_nums, int):
+            item_nums = [item_nums]
+        if item_nums is None:
+            print("No item_nums provided and no csv_filename given.")
+            return
 
-            # Access the available_products dictionary
-            available_products = store.available_products
+    # Validate availability is a boolean
+    if not isinstance(availability, bool):
+        raise ValueError("Availability parameter must be True or False")
 
-            # Add the new item to the dictionary
-            available_products[item_num] = True
+    # Query stores
+    stores = Store.objects.filter(store_number__in=store_nums)
+    found_store_nums = set(stores.values_list('store_number', flat=True))
+    missing_stores = set(store_nums) - found_store_nums
+    for ms in missing_stores:
+        print(f"Store with store_number={ms} does not exist.")
+    print(f"Found {stores.count()} stores matching input.")
 
-            # Assign the modified dictionary back to store.available_products
-            store.available_products = available_products
+    # Query products
+    products = Product.objects.filter(item_number__in=item_nums)
+    print(f"Product queryset count matching item_nums: {products.count()}")
 
-            # Save the changes to the store instance
-            store.save()
+    # Show any missing products from item_nums not in DB
+    product_item_numbers = set(products.values_list('item_number', flat=True))
+    missing_products = set(item_nums) - product_item_numbers
+    if missing_products:
+        print(f"Warning: {len(missing_products)} item_numbers not found in Products DB: {sorted(missing_products)}")
 
-            print(f"{item_num} has been added to {store.name}'s availabilities")
+    # Check how many StoreProduct rows will be affected
+    matching_storeproducts = StoreProduct.objects.filter(store__in=stores, product__in=products)
+    print(f"StoreProduct records matching filter before update: {matching_storeproducts.count()}")
 
-        except Store.DoesNotExist:
-            print(f"Store with store number {store_num} does not exist.")
+    # Perform update
+    updated_count = matching_storeproducts.update(is_available=availability)
+    print(f"Updated {updated_count} StoreProduct records to is_available={availability}.")
 
-
-def remove_item_from_store(store_num, item_num):
-    store = Store.objects.get(store_number=store_num)
-
-    # Access the available_products dictionary
-    available_products = store.available_products
-
-    # Add the new item to the dictionary
-    available_products[item_num] = False
-
-    # Assign the modified dictionary back to store.available_products
-    store.available_products = available_products
-
-    # Save the changes to the store instance
-    store.save()
-
-    print(f"{item_num} has been removed {store.name}'s availabilities")
-
-def remove_item_from_all_stores(item_num):
-    # Retrieve all store objects
-    stores = Store.objects.all()
-
+    # Print updated stores info
     for store in stores:
-        # Access the available_products dictionary
-        available_products = store.available_products
+        print(f"Updated products for store: {store.name}")
 
-        available_products[item_num] = False
 
-        # Assign the modified dictionary back to store.available_products
-        store.available_products = available_products
-        print(f'item num {item_num} removed from {store.name}')
-        # Save the changes to the store instance
-        store.save()
-    print(f'Item num {item_num} has been removed from all stores')
 
 def manual_order(store_number, filename):
     # from products.models import Product
@@ -308,13 +246,21 @@ def manual_order(store_number, filename):
 
 
 
+# reset_storeproduct_table()
+print_storeproduct_table()
+
+
+
+# def set_items_availability(store_nums, item_nums=None, availability=True, csv_filename=None):
+# set_items_availability(52, list(range(101,401)), False)
+# set_items_availability([52], availability=True, csv_filename='walts.csv')
 
 # avail_products_csv(16)
 # delete_duplicate stores()
-# reset_stores()
+
 # view_stores()
 # set_store_products()
-# view_stores_products()
+
 
 # create_store_instance(store_num, username, password, email, name)
 # create_store_instance()
@@ -323,20 +269,17 @@ def manual_order(store_number, filename):
 # csv file to the same directory as the script !!
 # set_store_products_csv(52, "peoples")
 
-# remove_item_from_store(store_num, item_num)
-# remove_item_from_store(16, 325)
-
 # remove_item_from_all_stores(item_num)
 # remove_item_from_all_stores(226)
 
 # view_store_products(15)
-set_store_slots(52, 112)
+# set_store_slots(52, 112)
+# check_slots(14)
 # update_username(52, "anacortes")
 # update_name(52, "Ace Hardware - Anacortes")
-# check_slots(14)
-# add_item_to_store(16, 442)
-# add_item_to_stores(store_nums, item_num)
-# add_item_to_stores([12, 13, 15, 16, 23, 24, 40, 41, 43, 44, 45, 47, 48, 49], 443)
+
+
+
 
 
 # manual_order(44, "sno")
