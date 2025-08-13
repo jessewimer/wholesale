@@ -1050,25 +1050,26 @@
             }
         }
 
+
+
         // Function to handle store filter changes
         function handleStoreFilterChange(event) {
             const storeId = event.target.value;
             currentStore = storeId;
 
-            // Show/hide bulk action buttons
+            // Reset all other filters to default whenever ANY store is selected (including "All Stores")
+            const categoryFilter = document.getElementById('category-filter');
+            const vegtypeFilter = document.getElementById('vegtype-filter');
+            const viewCheckedFilter = document.getElementById('view-checked-filter');
+            
+            if (categoryFilter) categoryFilter.value = '';
+            if (vegtypeFilter) vegtypeFilter.value = '';
+            if (viewCheckedFilter) viewCheckedFilter.value = '';
+
+            // Show/hide bulk action buttons only for "All Stores"
             const bulkActions = document.getElementById('bulk-actions');
             if (storeId === '') {
                 bulkActions.classList.add('show');
-                
-                // Reset all other filters to default when "All Stores" is selected
-                const categoryFilter = document.getElementById('category-filter');
-                const vegtypeFilter = document.getElementById('vegtype-filter');
-                const viewCheckedFilter = document.getElementById('view-checked-filter');
-                
-                if (categoryFilter) categoryFilter.value = '';
-                if (vegtypeFilter) vegtypeFilter.value = '';
-                if (viewCheckedFilter) viewCheckedFilter.value = '';
-                
             } else {
                 bulkActions.classList.remove('show');
             }
@@ -1089,6 +1090,45 @@
             // Apply filters after any changes
             filterTable();
         }
+        // Function to handle store filter changes
+        // function handleStoreFilterChange(event) {
+        //     const storeId = event.target.value;
+        //     currentStore = storeId;
+
+        //     // Show/hide bulk action buttons
+        //     const bulkActions = document.getElementById('bulk-actions');
+        //     if (storeId === '') {
+        //         bulkActions.classList.add('show');
+                
+        //         // Reset all other filters to default when "All Stores" is selected
+        //         const categoryFilter = document.getElementById('category-filter');
+        //         const vegtypeFilter = document.getElementById('vegtype-filter');
+        //         const viewCheckedFilter = document.getElementById('view-checked-filter');
+                
+        //         if (categoryFilter) categoryFilter.value = '';
+        //         if (vegtypeFilter) vegtypeFilter.value = '';
+        //         if (viewCheckedFilter) viewCheckedFilter.value = '';
+                
+        //     } else {
+        //         bulkActions.classList.remove('show');
+        //     }
+
+        //     // Load store availability if a specific store is selected
+        //     if (storeId) {
+        //         loadStoreAvailability(storeId);
+        //     } else {
+        //         // Clear all checkboxes when "All Stores" is selected
+        //         const checkboxes = document.querySelectorAll('.product-checkbox');
+        //         checkboxes.forEach(checkbox => {
+        //             checkbox.checked = false;
+        //         });
+        //         selectedItems = {};
+        //         updateSelectedItemCount();
+        //     }
+            
+        //     // Apply filters after any changes
+        //     filterTable();
+        // }
 
         // Function to filter table based on all active filters
         function filterTable() {
