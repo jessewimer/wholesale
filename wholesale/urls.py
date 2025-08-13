@@ -22,7 +22,8 @@ from stores import views as store_views
 
 urlpatterns = [
 
-    path('admin/edit-products', product_views.edit_product_availabilities, name='admin_product_list'),
+    # path('admin/edit-products', product_views.edit_product_availabilities, name='admin_product_list'),
+    path('admin/edit-products', product_views.edit_products, name='edit_products'),
     path('admin/', admin.site.urls),
     path('accounts/', include('stores.urls')),
     path('orders/', include('orders.urls')),

@@ -247,12 +247,12 @@ def manual_order(store_number, filename):
 
 
 # reset_storeproduct_table()
-print_storeproduct_table()
+# print_storeproduct_table()
 
 
 
 # def set_items_availability(store_nums, item_nums=None, availability=True, csv_filename=None):
-# set_items_availability(52, list(range(101,401)), False)
+set_items_availability(43, list(range(101,401)), True)
 # set_items_availability([52], availability=True, csv_filename='walts.csv')
 
 # avail_products_csv(16)

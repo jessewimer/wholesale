@@ -1,0 +1,1525 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uprising Seeds - Wholesale Order</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Section - Reduced height */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2px;
+        }
+
+        .brand-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .store-name {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Controls Section with Stats in Middle */
+        .controls {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .left-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .stats-section {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 18px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .right-controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .styled-select {
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            background: white;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .styled-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .styled-select:hover {
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #495057;
+            border: 2px solid #dee2e6;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(243, 156, 18, 0.3);
+        }
+
+        /* Bulk action buttons - hidden by default */
+        .bulk-actions {
+            display: none;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .bulk-actions.show {
+            display: flex;
+        }
+
+        /* Table Section - More space now available */
+
+        /* Outer wrapper with background blur */
+        .table-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Inner scroll container */
+        .table-container {
+            max-height: calc(100vh - 280px);
+            overflow-y: auto; /* vertical scroll */
+            border-radius: 20px;
+        }
+
+        /* Table styling */
+        .product-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 16px;
+        }
+
+        /* Sticky table headers */
+        .product-table th {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 18px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-table th:first-child {
+            border-top-left-radius: 16px;
+        }
+
+        .product-table th:last-child {
+            border-top-right-radius: 16px;
+        }
+
+        /* Table body cells -  */
+        .product-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f1f3f4;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        /* Override hover to keep checkbox column white */
+        .product-table tbody tr:hover td:first-child {
+            background: white !important;
+        }
+
+        /* Custom Checkbox Styling - Updated to match quantity input style */
+        .checkbox-container {
+            padding: 0; /* Remove padding from container */
+        }
+
+        .custom-checkbox {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+            padding: 16px; /* Match the table cell padding */
+            margin: 0;
+            background: white;
+            /* Remove all positioning properties */
+        }
+
+        .custom-checkbox input[type="checkbox"] {
+            display: none;
+        }
+
+        .checkbox-checkmark {
+            width: 28px;
+            height: 28px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .custom-checkbox:hover .checkbox-checkmark {
+            border-color: #667eea;
+            background: #f0f2ff;
+            transform: scale(1.1);
+        }
+
+        .custom-checkbox input[type="checkbox"]:checked + .checkbox-checkmark {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .custom-checkbox input[type="checkbox"]:checked + .checkbox-checkmark::after {
+            content: '✓';
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            animation: checkmarkPop 0.3s ease-out;
+        }
+
+
+
+    
+        @keyframes checkmarkPop {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.3);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Previously Ordered Badge */
+        .prev-ordered-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 50px;
+            height: 32px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .prev-ordered-badge.has-ordered {
+            background: linear-gradient(135deg, #10ac84, #00d2d3);
+            color: white;
+        }
+
+        .prev-ordered-badge.not-ordered {
+            background: #f1f2f6;
+            color: #747d8c;
+            border: 2px solid #ddd;
+        }
+
+        /* Thumbnail Styling */
+        .photo-thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            object-fit: cover;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #e1e5e9;
+        }
+
+        .photo-thumbnail:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border-color: #667eea;
+        }
+
+        /* Modal Styling */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1px;
+            right: 1px;
+            background: transparent;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #333;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: none;
+            transition: none;
+        }
+
+        .modal-close:hover {
+            cursor: pointer;
+            /* no background or color change on hover */
+            transform: none;
+        }
+
+        .photo-modal-content {
+            text-align: center;
+        }
+
+        .photo-modal-image {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Error Message Styling */
+        .error-message {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+            z-index: 1001;
+            font-weight: 500;
+        }
+
+        /* Category badges */
+        .category-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .category-vegetables {
+            background: linear-gradient(135deg, #55a3ff, #003d82);
+            color: white;
+        }
+
+        .category-herbs {
+            background: linear-gradient(135deg, #26de81, #20bf6b);
+            color: white;
+        }
+
+        .category-flowers {
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+            color: white;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .table-container {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .header {
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .controls {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* Add this class for the view-orders-logout wrapper in your header */
+        .view-orders-logout {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Modified responsive design - replace your existing media queries with these */
+        @media (max-width: 1024px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+
+            .left-controls {
+                justify-content: center;
+            }
+
+            /* Keep stats side by side on tablet */
+            .stats-section {
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .right-controls {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            /* Keep view orders and logout side by side on mobile */
+            .view-orders-logout {
+                display: flex;
+                gap: 8px;
+                justify-content: center;
+            }
+
+            /* Make buttons slightly smaller on mobile to fit side by side */
+            .view-orders-logout .btn {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+
+            .controls {
+                padding: 15px 20px;
+            }
+
+            .left-controls {
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            /* Fixed width for filter dropdowns on mobile */
+            .left-controls .styled-select {
+                max-width: 180px;
+                width: 100%;
+            }
+            /* Keep stats side by side on mobile with smaller padding and gap */
+            .stats-section {
+                justify-content: center;
+                gap: 10px;
+                /* Remove any flex-direction: column that was forcing them to stack */
+            }
+
+            /* Make stat items more compact on mobile */
+            .stat-item {
+                padding: 10px 14px;
+                min-width: 120px;
+            }
+
+            .stat-label {
+                font-size: 0.8rem;
+            }
+
+            .stat-value {
+                font-size: 1.1rem;
+            }
+
+            .right-controls {
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+            }
+
+            /* Fixed width for action buttons on mobile */
+            .right-controls .btn {
+                max-width: 120px;
+                padding: 8px 12px;
+                font-size: 0.85rem;
+                white-space: nowrap;
+            }
+            .brand-title {
+                font-size: 1.8rem;
+            }
+
+            .store-name {
+                font-size: 1.4rem;
+            }
+
+            .table-container {
+                max-height: calc(100vh - 320px);
+            }
+        }
+
+        /* Very small screens (320px and below) - extra compact */
+        @media (max-width: 480px) {
+            /* Even more compact stats for very small screens */
+            .stat-item {
+                padding: 8px 12px;
+                min-width: 110px;
+            }
+
+            .stat-label {
+                font-size: 0.75rem;
+            }
+
+            .stat-value {
+                font-size: 1rem;
+            }
+
+            /* Smaller buttons for very small screens */
+            .view-orders-logout .btn {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+
+            .stats-section {
+                gap: 8px;
+            }
+        }
+
+        /* Loading state */
+        .btn.loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            margin: auto;
+            border: 2px solid transparent;
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header Section - Reduced height -->
+        <div class="header">
+            <div class="header-content">
+                <div class="brand-section">
+                    <h1 class="brand-title">Uprising Seeds</h1>
+                    <p class="brand-subtitle">Edit Product Availabilities</p>
+                </div>
+                <!-- <h2 class="store-name">{{ store.name }}</h2> -->
+                    <div class="view-orders-logout">
+                                    
+                        <button class="btn btn-secondary" onclick="showVerifyClearOrderModal()">Clear</button>
+                        <button class="btn btn-primary" onclick="showSaveModal()">Save</button>
+
+                        <!--<button class="btn btn-primary" id="view-orders">View Orders</button>-->
+                        <button type="button" class="btn btn-primary" onclick="showViewTemplatesModal()">Templates</button>
+                        <button class="btn btn-danger" id="logout-button">Logout</button>
+                    </div>
+
+            </div>
+        </div>
+
+        <!-- Controls Section -->
+        <div class="controls">
+            <div class="left-controls">
+
+                <!-- Store Filter -->
+                <div class="filter-group">
+                    <label class="filter-label" for="store-filter">Store</label>
+                    <select id="store-filter" class="styled-select">
+                        <option value="">All Stores</option>
+                        {% for store in stores %}
+                            <option value="{{ store.store_number }}">{{ store.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="filter-group">
+                    <label class="filter-label" for="category-filter">Category</label>
+                    <select id="category-filter" class="styled-select">
+                        <option value="">All Categories</option>
+                        <option value="vegetables">Vegetables</option>
+                        <option value="herbs">Herbs</option>
+                        <option value="flowers">Flowers</option>
+                    </select>
+                </div>
+
+                <!-- Veg Type Filter -->
+                <div class="filter-group">
+                    <label class="filter-label" for="vegtype-filter">Crop</label>
+                    <select id="vegtype-filter" class="styled-select">
+                        <option value="">All Crops</option>
+                        {% for veg_type in veg_types %}
+                            <option value="{{ veg_type }}">{{ veg_type|capfirst }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <!-- View checked filter -->
+                <div class="filter-group">
+                    <label class="filter-label" for="view-checked-filter">View Checked</label>
+                    <select id="view-checked-filter" class="styled-select">
+                        <option value="">All</option>
+                        <option value="checked">Checked</option>
+                        <option value="unchecked">Unchecked</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Stats Section with Bulk Actions -->
+            <div class="stats-section">
+
+                <!-- Bulk Action Buttons (shown only when All Stores is selected) -->
+                <div class="bulk-actions" id="bulk-actions">
+                    <button class="btn btn-warning btn-sm" onclick="bulkAddToAllStores()">Add</button>
+                    <button class="btn btn-danger btn-sm" onclick="bulkRemoveFromAllStores()">Remove</button>
+                </div> 
+
+                <div class="stat-item">
+                    <span class="stat-label">Selected Items</span>
+                    <span class="stat-value"><span id="selected-items-count">0</span></span>
+                </div>
+                
+            </div>
+        </div>
+
+        <!-- Hidden form for POST submission -->
+        <form id="save-form" method="post" style="display: none;">
+            {% csrf_token %}
+            <input type="hidden" name="selected_products" id="selected-products-input">
+            <input type="hidden" name="store_number" id="store-number-input">
+        </form>
+
+        <!-- Product Table -->
+        <div class="table-wrapper">
+            <div class="table-container">
+                <table class="product-table" id="product-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">Select</th>
+                            <th style="width: 120px;">Category</th>
+                            <th>Type</th>
+                            <th>Sub Type</th>
+                            <th>Variety</th>
+                            <th style="width: 300px;">Description</th>
+                            <th style="width: 100px;">Photo</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr id="product-row-{{ product.item_number }}"
+                            class="table-row"
+                            data-category="{{ product.category|lower }}"
+                            data-veg-type="{{ product.veg_type|lower }}"
+                            data-item-number="{{ product.item_number }}">
+
+                            <!-- Checkbox -->
+                            <td class="checkbox-container">
+                                <label class="custom-checkbox">
+                                    <input type="checkbox"
+                                        class="product-checkbox"
+                                        data-item-number="{{ product.item_number }}">
+                                    <span class="checkbox-checkmark"></span>
+                                </label>
+                            </td>
+
+                            <!-- Category -->
+                            <td>
+                                <span class="category-badge category-{{ product.category|lower }}">
+                                    {{ product.category }}
+                                </span>
+                            </td>
+
+                            <!-- Type, Sub Type, Variety -->
+                            <td>{{ product.veg_type }}</td>
+                            <td>{{ product.sub_type }}</td>
+                            <td style="font-weight: 600;">{{ product.variety }}</td>
+
+                            <!-- Description -->
+                            <td>{{ product.description }}</td>
+
+                            <!-- Photo -->
+                            <td>
+                                {% if product.photo %}
+                                    {% static product.photo as photo_url %}
+                                {% else %}
+                                    {% static "default-photo.svg" as photo_url %}
+                                {% endif %}
+                                <img src="{{ photo_url }}"
+                                    alt="{{ product.variety }}"
+                                    class="photo-thumbnail"
+                                    onclick="openPhotoModal('{{ photo_url }}', '{{ product.variety }}')">
+                            </td>
+
+                            <!-- Notes -->
+                            <td>{{ product.notes }}</td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+    <!-- Photo Modal -->
+    <div class="modal-overlay" id="photoModal">
+        <div class="modal-content photo-modal-content">
+            <button class="modal-close" onclick="closePhotoModal()">&times;</button>
+            <img id="photoModalImage" class="photo-modal-image" src="" alt="">
+            <h3 id="photoModalTitle" style="margin-top: 20px; color: #333;"></h3>
+        </div>
+    </div>
+
+    <!-- Save Confirmation Modal -->
+    <div class="modal-overlay" id="saveModal">
+        <div class="modal-content" style="text-align: center;">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2 style="margin-bottom: 20px;">Save Changes</h2>
+            <p id="save-summary" style="margin-bottom: 30px;"></p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button id="confirmSave" type="button" class="btn btn-primary">Confirm Save</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModalOverlay">
+        <div class="modal-content" style="text-align: center;">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2 style="color: #10ac84; margin-bottom: 20px;">Selection Saved Successfully!</h2>
+            <!-- <p>We will notify you when your order ships.</p> -->
+        </div>
+    </div>
+
+    <!-- Clear Order Verification Modal -->
+    <div class="modal-overlay" id="verifyClearOrder">
+        <div class="modal-content" style="text-align: center;">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2 style="margin-bottom: 20px;">Clear</h2>
+            <p style="margin-bottom: 30px;">Are you sure you want to clear your selection?</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button id="submitClearOrder" type="button" class="btn btn-danger">Yes, Clear</button>
+                <button id="clearOrderCloseButton" type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Add Confirmation Modal -->
+    <div class="modal-overlay" id="bulkAddModal">
+        <div class="modal-content" style="text-align: center;">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2 style="margin-bottom: 20px;">Add to All Stores</h2>
+            <p id="bulk-add-summary" style="margin-bottom: 30px;"></p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button id="confirmBulkAdd" type="button" class="btn btn-warning">Confirm Add</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Remove Confirmation Modal -->
+    <div class="modal-overlay" id="bulkRemoveModal">
+        <div class="modal-content" style="text-align: center;">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2 style="margin-bottom: 20px;">Remove from All Stores</h2>
+            <p id="bulk-remove-summary" style="margin-bottom: 30px;"></p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button id="confirmBulkRemove" type="button" class="btn btn-danger">Confirm Remove</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Verification Modal -->
+    <div class="modal-overlay" id="verifyLogout">
+        <div class="modal-content" style="text-align: center;">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2 style="margin-bottom: 20px;">Logout</h2>
+            <p style="margin-bottom: 30px;">Are you sure? Any selection data that has not been submitted will be lost.</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button id="submitLogout" type="button" class="btn btn-danger">Yes, Logout</button>
+                <button id="logoutCloseButton" type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    <div class="error-message" id="errorMessage">
+        <span id="error-text">Error message goes here</span>
+        <button onclick="closeErrorMessage()" style="margin-left: 15px; background: none; border: none; color: white; cursor: pointer;">✕</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        window.logoutUrl = "{% url 'office_logout' %}";
+        let selectedItems = {};
+        let currentStore = '';
+        let allStoresAvailableProducts = {}; // Cache for all stores' available products
+
+        // Function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Function to update the selected item count
+        function updateSelectedItemCount() {
+            const totalSelectedCount = Object.keys(selectedItems).length;
+            document.getElementById('selected-items-count').textContent = totalSelectedCount;
+        }
+
+        // Function to handle checkbox changes
+        function handleCheckboxChange(event) {
+            const checkbox = event.target;
+            const itemNumber = checkbox.getAttribute('data-item-number');
+            
+            if (checkbox.checked) {
+                selectedItems[itemNumber] = true;
+            } else {
+                delete selectedItems[itemNumber];
+            }
+            
+            updateSelectedItemCount();
+            filterTable(); // Add this line to update filtering when checkboxes change
+        }
+
+        // Function to load store availability
+        async function loadStoreAvailability(storeId) {
+            if (!storeId) return;
+            
+            try {
+                const formData = new FormData();
+                formData.append('store_id', storeId);
+                formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+
+                const response = await fetch('', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update checkboxes based on store's available products
+                    const checkboxes = document.querySelectorAll('.product-checkbox');
+                    checkboxes.forEach(checkbox => {
+                        const itemNumber = checkbox.getAttribute('data-item-number');
+                        checkbox.checked = data.available_item_numbers.includes(itemNumber);
+                        if (checkbox.checked) {
+                            selectedItems[itemNumber] = true;
+                        } else {
+                            delete selectedItems[itemNumber];
+                        }
+                    });
+                    updateSelectedItemCount();
+                } else {
+                    showErrorMessage(data.error || 'Failed to load store availability');
+                }
+            } catch (error) {
+                console.error('Error loading store availability:', error);
+                showErrorMessage('Failed to load store availability');
+            }
+        }
+
+        // Function to handle store filter changes
+        function handleStoreFilterChange(event) {
+            const storeId = event.target.value;
+            currentStore = storeId;
+
+            // Show/hide bulk action buttons
+            const bulkActions = document.getElementById('bulk-actions');
+            if (storeId === '') {
+                bulkActions.classList.add('show');
+                
+                // Reset all other filters to default when "All Stores" is selected
+                const categoryFilter = document.getElementById('category-filter');
+                const vegtypeFilter = document.getElementById('vegtype-filter');
+                const viewCheckedFilter = document.getElementById('view-checked-filter');
+                
+                if (categoryFilter) categoryFilter.value = '';
+                if (vegtypeFilter) vegtypeFilter.value = '';
+                if (viewCheckedFilter) viewCheckedFilter.value = '';
+                
+            } else {
+                bulkActions.classList.remove('show');
+            }
+
+            // Load store availability if a specific store is selected
+            if (storeId) {
+                loadStoreAvailability(storeId);
+            } else {
+                // Clear all checkboxes when "All Stores" is selected
+                const checkboxes = document.querySelectorAll('.product-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                selectedItems = {};
+                updateSelectedItemCount();
+            }
+            
+            // Apply filters after any changes
+            filterTable();
+        }
+
+        // Function to filter table based on all active filters
+        function filterTable() {
+            const storeFilter = document.getElementById('store-filter').value;
+            const categoryFilter = document.getElementById('category-filter').value.toLowerCase();
+            const vegtypeFilter = document.getElementById('vegtype-filter').value.toLowerCase();
+            const viewCheckedFilter = document.getElementById('view-checked-filter').value;
+
+            const rows = document.querySelectorAll('.table-row');
+
+            rows.forEach(row => {
+                const categoryData = row.getAttribute('data-category').toLowerCase();
+                const vegtypeData = row.getAttribute('data-veg-type').toLowerCase();
+                const checkbox = row.querySelector('.product-checkbox');
+                const isChecked = checkbox ? checkbox.checked : false;
+                
+                let showRow = true;
+
+                // Category filter
+                if (categoryFilter && categoryData !== categoryFilter) {
+                    showRow = false;
+                }
+
+                // Veg type filter
+                if (vegtypeFilter && vegtypeData !== vegtypeFilter) {
+                    showRow = false;
+                }
+
+                // View checked filter
+                if (viewCheckedFilter === 'checked' && !isChecked) {
+                    showRow = false;
+                } else if (viewCheckedFilter === 'unchecked' && isChecked) {
+                    showRow = false;
+                }
+
+                row.style.display = showRow ? 'table-row' : 'none';
+            });
+
+            updateSelectedItemCount();
+        }
+
+        // Function to show save modal
+        function showSaveModal() {
+            // Check if "All Stores" is selected
+            if (!currentStore || currentStore === '') {
+                showErrorMessage('Save not available for "All Stores"');
+                return;
+            }
+
+            const selectedCheckboxes = document.querySelectorAll('.product-checkbox:checked');
+            
+            // if (selectedCheckboxes.length === 0) {
+            //     showErrorMessage('Please select at least one item.');
+            //     return;
+            // }
+
+            const storeName = document.querySelector(`#store-filter option[value="${currentStore}"]`).textContent;
+
+            const summary = `Save ${selectedCheckboxes.length} selected items to ${storeName}?`;
+            document.getElementById('save-summary').textContent = summary;
+            document.getElementById('saveModal').style.display = 'flex';
+        }
+
+        // Function to save changes
+        async function saveChanges() {
+            const selectedCheckboxes = document.querySelectorAll('.product-checkbox:checked');
+            const selectedItemNumbers = Array.from(selectedCheckboxes).map(cb => cb.getAttribute('data-item-number'));
+            
+            // if (selectedItemNumbers.length === 0) {
+            //     showErrorMessage('Please select at least one item.');
+            //     return;
+            // }
+
+            try {
+                const formData = new FormData();
+                formData.append('store_handle', currentStore || '');
+                formData.append('varieties', JSON.stringify(selectedItemNumbers));
+                formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+
+                const response = await fetch('', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    closeModal();
+                    document.getElementById('successModalOverlay').style.display = 'flex';
+                    setTimeout(() => {
+                        closeModal();
+                    }, 2000);
+                } else {
+                    showErrorMessage('Failed to save changes');
+                }
+            } catch (error) {
+                console.error('Error saving changes:', error);
+                showErrorMessage('Failed to save changes');
+            }
+        }
+
+        // Function for bulk add to all stores
+        function bulkAddToAllStores() {
+            const selectedCheckboxes = document.querySelectorAll('.product-checkbox:checked');
+            
+            if (selectedCheckboxes.length === 0) {
+                showErrorMessage('Please select at least one item to add.');
+                return;
+            }
+
+            const summary = `Add ${selectedCheckboxes.length} selected items to ALL stores?`;
+            document.getElementById('bulk-add-summary').textContent = summary;
+            document.getElementById('bulkAddModal').style.display = 'flex';
+        }
+
+        // Function for bulk remove from all stores
+        function bulkRemoveFromAllStores() {
+            const selectedCheckboxes = document.querySelectorAll('.product-checkbox:checked');
+            
+            if (selectedCheckboxes.length === 0) {
+                showErrorMessage('Please select at least one item to remove.');
+                return;
+            }
+
+            const summary = `Remove ${selectedCheckboxes.length} selected items from ALL stores?`;
+            document.getElementById('bulk-remove-summary').textContent = summary;
+            document.getElementById('bulkRemoveModal').style.display = 'flex';
+        }
+
+        // Function to confirm bulk add
+        async function confirmBulkAdd() {
+            const selectedCheckboxes = document.querySelectorAll('.product-checkbox:checked');
+            const selectedItemNumbers = Array.from(selectedCheckboxes).map(cb => cb.getAttribute('data-item-number'));
+            
+            try {
+                const formData = new FormData();
+                formData.append('varieties_to_add', JSON.stringify(selectedItemNumbers));
+                formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+
+                const response = await fetch('', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    closeModal();
+                    document.getElementById('successModalOverlay').style.display = 'flex';
+                    setTimeout(() => {
+                        closeModal();
+                    }, 2000);
+                } else {
+                    showErrorMessage('Failed to add items to all stores');
+                }
+            } catch (error) {
+                console.error('Error adding items to all stores:', error);
+                showErrorMessage('Failed to add items to all stores');
+            }
+        }
+
+        // Function to confirm bulk remove
+        async function confirmBulkRemove() {
+            const selectedCheckboxes = document.querySelectorAll('.product-checkbox:checked');
+            const selectedItemNumbers = Array.from(selectedCheckboxes).map(cb => cb.getAttribute('data-item-number'));
+            
+            try {
+                const formData = new FormData();
+                formData.append('varieties_to_remove', JSON.stringify(selectedItemNumbers));
+                formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+
+                const response = await fetch('', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    closeModal();
+                    document.getElementById('successModalOverlay').style.display = 'flex';
+                    setTimeout(() => {
+                        closeModal();
+                    }, 2000);
+                } else {
+                    showErrorMessage('Failed to remove items from all stores');
+                }
+            } catch (error) {
+                console.error('Error removing items from all stores:', error);
+                showErrorMessage('Failed to remove items from all stores');
+            }
+        }
+
+        // Function to open photo modal
+        function openPhotoModal(photoUrl, varietyName) {
+            const modal = document.getElementById('photoModal');
+            const image = document.getElementById('photoModalImage');
+            const title = document.getElementById('photoModalTitle');
+
+            image.src = photoUrl;
+            image.alt = varietyName;
+            title.textContent = varietyName;
+            modal.style.display = 'flex';
+        }
+
+        // Function to close photo modal
+        function closePhotoModal() {
+            const modal = document.getElementById('photoModal');
+            modal.style.display = 'none';
+        }
+
+        // Function to show verification modal for clearing selection
+        function showVerifyClearOrderModal() {
+            const modal = document.getElementById('verifyClearOrder');
+            modal.style.display = 'flex';
+        }
+
+        // Function to show logout verification
+        function showLogoutVerification() {
+            const modal = document.getElementById('verifyLogout');
+            modal.style.display = 'flex';
+        }
+
+        // Function to close modal
+        function closeModal() {
+            const modals = ['saveModal', 'successModalOverlay', 'verifyClearOrder', 'verifyLogout', 'bulkAddModal', 'bulkRemoveModal'];
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Function to sort table
+        function sortTable() {
+            const table = document.getElementById("product-table");
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.getElementsByTagName("tr"));
+
+            const categoryOrder = {
+                'vegetables': 1,
+                'herbs': 2,
+                'flowers': 3
+            };
+
+            rows.sort(function(row1, row2) {
+                const category1 = row1.getAttribute('data-category').toLowerCase();
+                const category2 = row2.getAttribute('data-category').toLowerCase();
+                const vegType1 = row1.cells[2].textContent;
+                const vegType2 = row2.cells[2].textContent;
+                const subType1 = row1.cells[3].textContent;
+                const subType2 = row2.cells[3].textContent;
+
+                if (categoryOrder[category1] !== categoryOrder[category2]) {
+                    return categoryOrder[category1] - categoryOrder[category2];
+                }
+                if (vegType1 !== vegType2) {
+                    return vegType1.localeCompare(vegType2);
+                }
+                return subType1.localeCompare(subType2);
+            });
+
+            rows.forEach(row => tbody.appendChild(row));
+
+            // Update tab indices for checkboxes
+            const checkboxes = document.querySelectorAll('.product-checkbox');
+            checkboxes.forEach((checkbox, index) => {
+                checkbox.tabIndex = index + 1;
+            });
+        }
+
+        // Function to clear selection
+        function clearSelection() {
+            selectedItems = {};
+            const checkboxes = document.querySelectorAll('.product-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateSelectedItemCount();
+            closeModal();
+        }
+
+        // Function to show error message
+        function showErrorMessage(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('error-text');
+            errorText.textContent = message;
+            errorMessage.style.display = 'block';
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                closeErrorMessage();
+            }, 5000);
+        }
+
+        // Function to close error message
+        function closeErrorMessage() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        // Function to logout
+        function logout() {
+            console.log('Logout function called');
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = window.logoutUrl || '/accounts/logout/';
+
+            let csrfToken = getCookie('csrftoken');
+
+            if (csrfToken) {
+                const csrfHidden = document.createElement('input');
+                csrfHidden.type = 'hidden';
+                csrfHidden.name = 'csrfmiddlewaretoken';
+                csrfHidden.value = csrfToken;
+                form.appendChild(csrfHidden);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // Placeholder function for templates modal
+        function showViewTemplatesModal() {
+            showErrorMessage('Templates functionality not yet implemented');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Dashboard loaded');
+
+            // Event Listeners
+            const logoutButton = document.getElementById('logout-button');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', showLogoutVerification);
+            }
+
+            const storeFilter = document.getElementById('store-filter');
+            if (storeFilter) {
+                storeFilter.addEventListener('change', handleStoreFilterChange);
+            }
+
+            const categoryFilter = document.getElementById('category-filter');
+            if (categoryFilter) {
+                categoryFilter.addEventListener('change', filterTable);
+            }
+
+            const vegtypeFilter = document.getElementById('vegtype-filter');
+            if (vegtypeFilter) {
+                vegtypeFilter.addEventListener('change', filterTable);
+            }
+
+            const viewCheckedFilter = document.getElementById('view-checked-filter');
+            if (viewCheckedFilter) {
+                viewCheckedFilter.addEventListener('change', filterTable);
+            }
+            
+            const submitClearOrder = document.getElementById('submitClearOrder');
+            if (submitClearOrder) {
+                submitClearOrder.addEventListener('click', clearSelection);
+            }
+
+            const submitLogout = document.getElementById('submitLogout');
+            if (submitLogout) {
+                submitLogout.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+
+            const confirmSave = document.getElementById('confirmSave');
+            if (confirmSave) {
+                confirmSave.addEventListener('click', saveChanges);
+            }
+
+            const confirmBulkAddBtn = document.getElementById('confirmBulkAdd');
+            if (confirmBulkAddBtn) {
+                confirmBulkAddBtn.addEventListener('click', confirmBulkAdd);
+            }
+
+            const confirmBulkRemoveBtn = document.getElementById('confirmBulkRemove');
+            if (confirmBulkRemoveBtn) {
+                confirmBulkRemoveBtn.addEventListener('click', confirmBulkRemove);
+            }
+
+            // Checkbox event listeners
+            const checkboxes = document.querySelectorAll('.product-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', handleCheckboxChange);
+            });
+
+            // Initialize page
+            sortTable();
+            updateSelectedItemCount();
+            filterTable();
+
+            // Initialize bulk actions visibility based on default store filter value
+            const initialStoreValue = storeFilter ? storeFilter.value : '';
+            const bulkActions = document.getElementById('bulk-actions');
+            if (initialStoreValue === '') {
+                bulkActions.classList.add('show');
+            } else {
+                bulkActions.classList.remove('show');
+            }
+
+            // Close modals when clicking outside
+            document.addEventListener('click', function(event) {
+                const modals = document.querySelectorAll('.modal-overlay');
+                modals.forEach(modal => {
+                    if (event.target === modal) {
+                        if (modal.id === 'photoModal') {
+                            closePhotoModal();
+                        } else {
+                            closeModal();
+                        }
+                    }
+                });
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    closeModal();
+                    closePhotoModal();
+                    closeErrorMessage();
+                }
+            });
+
+            console.log('All event listeners attached');
+        });
+
+    </script>
+</body>
+</html>

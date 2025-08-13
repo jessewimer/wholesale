@@ -1,4 +1,4 @@
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.shortcuts import render
 from .decorators import brian_login_required
@@ -12,8 +12,11 @@ class OfficeLoginView(LoginView):
     redirect_authenticated_user = True             # Redirect if already logged in
 
     def get_success_url(self):
-        # Redirect to office dashboard after login
-        return reverse_lazy('office_dashboard')
+        # Redirect to edit products page after login
+        return reverse_lazy('edit_products')
+
+class OfficeLogoutView(LogoutView):
+    next_page = 'office_login'
 
 @brian_login_required
 def office_dashboard(request):

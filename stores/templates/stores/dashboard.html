@@ -648,6 +648,7 @@
 </head>
 
 <body>
+    <!-- {{ previous_items|json_script:"previous-items-data" }} -->
     <div class="container">
         <!-- Header Section - Reduced height -->
         <div class="header">
@@ -755,17 +756,16 @@
                                 <td>{{ product.description }}</td>
                                 <td>
                                     {% if product.photo %}
-                                        <img src="{% static product.photo %}"
-                                             alt="{{ product.variety }}"
-                                             class="photo-thumbnail"
-                                             onclick="openPhotoModal('{% static product.photo %}', '{{ product.variety }}')">
+                                        {% static product.photo as photo_url %}
                                     {% else %}
-                                        <img src="{% static 'default-photo.svg' %}"
-                                             alt="{{ product.variety }}"
-                                             class="photo-thumbnail"
-                                             onclick="openPhotoModal('{% static 'default-photo.svg' %}', '{{ product.variety }}')">
+                                        {% static "default-photo.svg" as photo_url %}
                                     {% endif %}
+                                    <img src="{{ photo_url }}"
+                                        alt="{{ product.variety }}"
+                                        class="photo-thumbnail"
+                                        onclick="openPhotoModal('{{ photo_url }}', '{{ product.variety }}')">
                                 </td>
+                 
                                 <td>{{ product.notes }}</td>
                             </tr>
                             {% endfor %}
@@ -878,17 +878,6 @@
         </div>
     </div>
 
-    <!-- Photo Modal -->
-    <!--<div class="modal-overlay" id="photoModal">-->
-    <!--    <div class="modal-content photo-modal-content">-->
-    <!--        <div class="photo-container">-->
-    <!--            <button class="modal-close" onclick="closePhotoModal()">&times;</button>-->
-    <!--            <img id="photoModalImage" class="photo-modal-image" src="" alt="">-->
-    <!--        </div>-->
-    <!--        <h3 id="photoModalTitle" style="margin-top: 20px; color: #333;"></h3>-->
-    <!--    </div>-->
-    <!--</div>-->
-
     <!-- Success Modal -->
     <div class="modal-overlay" id="successModalOverlay">
         <div class="modal-content" style="text-align: center;">
@@ -937,6 +926,7 @@
         var orderData = {};
         const pktPrice = parseFloat("{{ pkt_price }}");
         var product_dict = JSON.parse('{{ product_dict_json|escapejs }}');
+        var previousItems = JSON.parse('{{ previous_items|escapejs }}');
         var previousOrderData = {};
         window.logoutUrl = "{% url 'logout' %}";
 
@@ -964,7 +954,7 @@
 
         // Function to populate previously ordered quantities
         function populatePreviousOrders() {
-            var previousItems = {{ previous_items|safe }};
+            // var previousItems = {{ previous_items|safe }};
             console.log('Previous items data:', previousItems);
 
             // Convert array to object for easier lookup if it's just item numbers
@@ -1411,7 +1401,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Dashboard loaded');
 
-            const previousItems = {{ previous_items|safe }};
+            // const previousItems = {{ previous_items|safe }};
             const hasPreviousItems = previousItems && Object.keys(previousItems).length > 0;
 
             // Logout functionality
