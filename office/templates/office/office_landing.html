@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uprising Seeds - Office Portal</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Section */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .brand-title {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .brand-subtitle {
+            font-size: 1.3rem;
+            color: #666;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .welcome-text {
+            font-size: 1rem;
+            color: #888;
+            font-weight: 400;
+        }
+
+        /* Action Cards Section */
+        .actions-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .action-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+
+        .action-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .action-description {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        /* Specific card styling - all turn green on hover */
+        .edit-products-card:hover .action-icon {
+            background: linear-gradient(135deg, #26de81, #20bf6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .view-variety-card:hover .action-icon {
+            background: linear-gradient(135deg, #26de81, #20bf6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .inventory-card:hover .action-icon {
+            background: linear-gradient(135deg, #26de81, #20bf6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Footer Section */
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-top: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .logout-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .logout-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header {
+                padding: 30px 20px;
+                margin-bottom: 25px;
+            }
+
+            .brand-title {
+                font-size: 2.2rem;
+            }
+
+            .brand-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .actions-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .action-card {
+                padding: 30px 25px;
+            }
+
+            .action-icon {
+                font-size: 2.5rem;
+            }
+
+            .action-title {
+                font-size: 1.2rem;
+            }
+
+            .footer {
+                padding: 15px 20px;
+                margin-top: 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 25px 15px;
+            }
+
+            .brand-title {
+                font-size: 1.8rem;
+            }
+
+            .action-card {
+                padding: 25px 20px;
+            }
+
+            .action-icon {
+                font-size: 2.2rem;
+                margin-bottom: 15px;
+            }
+        }
+
+        /* Loading state - simplified (remove if still causing issues) */
+        .action-card.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Logout Verification Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #333;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 8px;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #495057;
+            border: 2px solid #dee2e6;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1 class="brand-title">Uprising Seeds</h1>
+            <p class="brand-subtitle">Office Portal</p>
+            <!-- <p class="welcome-text">Select an action to get started</p> -->
+        </div>
+
+        <!-- Action Cards Section -->
+        <div class="actions-container">
+            <!-- Edit Store Products Card -->
+            <a href="{% url 'edit_products' %}" class="action-card edit-products-card">
+                <div class="action-icon">🛠️</div>
+                <h3 class="action-title">Edit Store Products</h3>
+                <p class="action-description">Manage product availability for each store location</p>
+            </a>
+
+            <!-- View Variety Card -->
+            <a href="{% url 'view_variety' %}" class="action-card view-variety-card">
+                <div class="action-icon">🌱</div>
+                <h3 class="action-title">View Varieties</h3>
+                <p class="action-description">Browse and review all available seed varieties</p>
+            </a>
+
+            <!-- Inventory/Germination Card -->
+            <a href="{% url 'inventory' %}" class="action-card inventory-card">
+                <div class="action-icon">📊</div>
+                <h3 class="action-title">Inventory & Germination</h3>
+                <p class="action-description">Track inventory levels and germination data</p>
+            </a>
+        </div>
+
+        <!-- Footer with Logout -->
+        <div class="footer">
+            <button class="logout-button" onclick="showLogoutVerification()">
+                Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Logout Verification Modal -->
+    <div class="modal-overlay" id="verifyLogout">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2 style="margin-bottom: 20px;">Logout</h2>
+            <p style="margin-bottom: 30px;">Are you sure you want to logout?</p>
+            <div>
+                <button class="btn btn-danger" onclick="logout()">Yes, Logout</button>
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set the logout URL using Django template tag
+        window.logoutUrl = "{% url 'office_logout' %}";
+
+        // Function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Function to show logout verification
+        function showLogoutVerification() {
+            const modal = document.getElementById('verifyLogout');
+            modal.style.display = 'flex';
+        }
+
+        // Function to close modal
+        function closeModal() {
+            const modal = document.getElementById('verifyLogout');
+            modal.style.display = 'none';
+        }
+
+        // Function to logout
+        function logout() {
+            console.log('Logout function called');
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = window.logoutUrl || '/accounts/logout/';
+
+            let csrfToken = getCookie('csrftoken');
+
+            if (csrfToken) {
+                const csrfHidden = document.createElement('input');
+                csrfHidden.type = 'hidden';
+                csrfHidden.name = 'csrfmiddlewaretoken';
+                csrfHidden.value = csrfToken;
+                form.appendChild(csrfHidden);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // Add loading states to action cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const actionCards = document.querySelectorAll('.action-card');
+            
+            // Clear loading states immediately and after a short delay
+            function clearAllLoadingStates() {
+                actionCards.forEach(card => {
+                    card.classList.remove('loading');
+                });
+            }
+            
+            // Clear on page load
+            clearAllLoadingStates();
+            
+            // Clear again after a short delay to handle any race conditions
+            setTimeout(clearAllLoadingStates, 100);
+            
+            actionCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Clear all loading states first
+                    clearAllLoadingStates();
+                    
+                    // Add loading state only to clicked card
+                    this.classList.add('loading');
+                    
+                    // Remove loading state after a delay (in case navigation fails)
+                    setTimeout(() => {
+                        this.classList.remove('loading');
+                    }, 3000);
+                });
+            });
+
+            // Close modal when clicking outside
+            document.addEventListener('click', function(event) {
+                const modal = document.getElementById('verifyLogout');
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        });
+
+        // Also clear loading states when the page becomes visible (back button)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                const actionCards = document.querySelectorAll('.action-card');
+                actionCards.forEach(card => {
+                    card.classList.remove('loading');
+                });
+            }
+        });
+
+        // Clear loading states when window gains focus
+        window.addEventListener('focus', function() {
+            const actionCards = document.querySelectorAll('.action-card');
+            actionCards.forEach(card => {
+                card.classList.remove('loading');
+            });
+        });
+    </script>
+</body>
+</html>

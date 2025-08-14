@@ -62,6 +62,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     'office.apps.OfficeConfig',
+    # add lots app
+    'lots.apps.LotsConfig',
 ]
 
 MIDDLEWARE = [

@@ -221,6 +221,17 @@
             box-shadow: 0 8px 25px rgba(243, 156, 18, 0.3);
         }
 
+        .btn-success {
+            background: linear-gradient(135deg, #26de81, #20bf6b);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(38, 222, 129, 0.3);
+        }
+
         /* Bulk action buttons - hidden by default */
         .bulk-actions {
             display: none;
@@ -724,7 +735,7 @@
 
                         <!--<button class="btn btn-primary" id="view-orders">View Orders</button>-->
                         <button type="button" class="btn btn-primary" onclick="showViewTemplatesModal()">Templates</button>
-                        <button class="btn btn-danger" id="logout-button">Logout</button>
+                        <button class="btn btn-danger" id="logout-button">Dashboard</button>
                     </div>
 
             </div>
@@ -782,7 +793,8 @@
 
                 <!-- Bulk Action Buttons (shown only when All Stores is selected) -->
                 <div class="bulk-actions" id="bulk-actions">
-                    <button class="btn btn-warning btn-sm" onclick="bulkAddToAllStores()">Add</button>
+                    <!-- <button class="btn btn-warning btn-sm" onclick="bulkAddToAllStores()">Add</button> -->
+                    <button class="btn btn-success btn-sm" onclick="bulkAddToAllStores()">Add</button>
                     <button class="btn btn-danger btn-sm" onclick="bulkRemoveFromAllStores()">Remove</button>
                 </div> 
 
@@ -945,7 +957,7 @@
     </div>
 
     <!-- Logout Verification Modal -->
-    <div class="modal-overlay" id="verifyLogout">
+    <!-- <div class="modal-overlay" id="verifyLogout">
         <div class="modal-content" style="text-align: center;">
             <button class="modal-close" onclick="closeModal()">&times;</button>
             <h2 style="margin-bottom: 20px;">Logout</h2>
@@ -955,7 +967,7 @@
                 <button id="logoutCloseButton" type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Error Message -->
     <div class="error-message" id="errorMessage">
@@ -966,7 +978,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
-        window.logoutUrl = "{% url 'office_logout' %}";
+        window.logoutUrl = "{% url 'office_landing' %}";
         let selectedItems = {};
         let currentStore = '';
         let allStoresAvailableProducts = {}; // Cache for all stores' available products
@@ -1347,14 +1359,14 @@
         }
 
         // Function to show logout verification
-        function showLogoutVerification() {
-            const modal = document.getElementById('verifyLogout');
-            modal.style.display = 'flex';
-        }
+        // function showLogoutVerification() {
+        //     const modal = document.getElementById('verifyLogout');
+        //     modal.style.display = 'flex';
+        // }
 
         // Function to close modal
         function closeModal() {
-            const modals = ['saveModal', 'successModalOverlay', 'verifyClearOrder', 'verifyLogout', 'bulkAddModal', 'bulkRemoveModal'];
+            const modals = ['saveModal', 'successModalOverlay', 'verifyClearOrder', 'bulkAddModal', 'bulkRemoveModal'];
             modals.forEach(modalId => {
                 const modal = document.getElementById(modalId);
                 if (modal) {
@@ -1430,27 +1442,32 @@
             document.getElementById('errorMessage').style.display = 'none';
         }
 
-        // Function to logout
-        function logout() {
-            console.log('Logout function called');
-
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = window.logoutUrl || '/accounts/logout/';
-
-            let csrfToken = getCookie('csrftoken');
-
-            if (csrfToken) {
-                const csrfHidden = document.createElement('input');
-                csrfHidden.type = 'hidden';
-                csrfHidden.name = 'csrfmiddlewaretoken';
-                csrfHidden.value = csrfToken;
-                form.appendChild(csrfHidden);
-            }
-
-            document.body.appendChild(form);
-            form.submit();
+        // Function to go to dashboard
+        function goToDashboard() {
+            window.location.href = "/office/dashboard/";
         }
+
+        // // Function to logout
+        // function logout() {
+        //     console.log('Logout function called');
+
+        //     const form = document.createElement('form');
+        //     form.method = 'POST';
+        //     form.action = window.logoutUrl || '/accounts/logout/';
+
+        //     let csrfToken = getCookie('csrftoken');
+
+        //     if (csrfToken) {
+        //         const csrfHidden = document.createElement('input');
+        //         csrfHidden.type = 'hidden';
+        //         csrfHidden.name = 'csrfmiddlewaretoken';
+        //         csrfHidden.value = csrfToken;
+        //         form.appendChild(csrfHidden);
+        //     }
+
+        //     document.body.appendChild(form);
+        //     form.submit();
+        // }
 
         // Placeholder function for templates modal
         function showViewTemplatesModal() {
@@ -1463,7 +1480,7 @@
             // Event Listeners
             const logoutButton = document.getElementById('logout-button');
             if (logoutButton) {
-                logoutButton.addEventListener('click', showLogoutVerification);
+                logoutButton.addEventListener('click', goToDashboard);
             }
 
             const storeFilter = document.getElementById('store-filter');
