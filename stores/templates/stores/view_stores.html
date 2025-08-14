@@ -147,6 +147,11 @@
             letter-spacing: 0.5px;
         }
 
+        .stores-table thead th:last-child {
+            text-align: center;
+            width: 60px;
+        }
+
         .stores-table tbody tr {
             background: white;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -170,29 +175,15 @@
             vertical-align: middle;
         }
 
+        .stores-table tbody td:last-child {
+            text-align: center;
+            width: 60px;
+        }
+
         .store-name {
             font-weight: 600;
             color: #333;
             font-size: 1rem;
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-active {
-            background: rgba(38, 222, 129, 0.15);
-            color: #20bf6b;
-        }
-
-        .status-inactive {
-            background: rgba(255, 107, 107, 0.15);
-            color: #ee5a24;
         }
 
         .email-link {
@@ -211,6 +202,36 @@
             font-family: 'Courier New', monospace;
             font-weight: 500;
             color: #666;
+        }
+
+        /* Edit Button */
+        .edit-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            color: #667eea;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .edit-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #764ba2;
+            transform: scale(1.1);
+        }
+
+        .edit-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         /* Empty State */
@@ -305,6 +326,7 @@
                 padding: 15px;
                 background: white;
                 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+                position: relative;
             }
 
             .stores-table td {
@@ -312,6 +334,14 @@
                 position: relative;
                 padding: 8px 0 8px 35%;
                 text-align: left;
+            }
+
+            .stores-table td:last-child {
+                position: absolute;
+                top: 15px;
+                right: 15px;
+                padding: 0;
+                text-align: right;
             }
 
             .stores-table td:before {
@@ -323,6 +353,10 @@
                 white-space: nowrap;
                 font-weight: 600;
                 color: #333;
+            }
+
+            .stores-table td:last-child:before {
+                content: none;
             }
         }
 
@@ -383,7 +417,7 @@
                             <th>Email</th>
                             <th>Slots</th>
                             <th>Last Order</th>
-                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -425,12 +459,13 @@
                                     <span style="color: #999;">Never</span>
                                 {% endif %}
                             </td>
-                            <td data-label="Status">
-                                {% if store.last_order_date %}
-                                    <span class="status-badge status-active">Active</span>
-                                {% else %}
-                                    <span class="status-badge status-inactive">Inactive</span>
-                                {% endif %}
+                            <td>
+                                <button class="edit-btn" onclick="editStore('{{ store.id }}')">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="m18 2 4 4-12 12H6v-4L18 2z"/>
+                                        <path d="m21.5 6.5-4-4"/>
+                                    </svg>
+                                </button>
                             </td>
                         </tr>
                         {% endfor %}
@@ -459,6 +494,20 @@
                 });
             });
         });
+
+        function editStore(storeId) {
+            // Prevent event bubbling to avoid triggering row click
+            event.stopPropagation();
+            
+            // Add your edit functionality here
+            console.log('Edit store:', storeId);
+            
+            // Example: redirect to edit page
+            // window.location.href = `/stores/${storeId}/edit/`;
+            
+            // Or: open a modal
+            // openEditModal(storeId);
+        }
     </script>
 </body>
 </html>

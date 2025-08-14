@@ -9,6 +9,7 @@ class Store(models.Model):
     password = models.CharField(max_length=100, null=True)
     username = models.CharField(max_length=100, null=True)
     name = models.CharField(max_length=100, null=True)
+    contact_name = models.CharField(max_length=100, null=True)
     email = models.EmailField(null=True)
     slots = models.IntegerField(null=True)
     last_order_date = models.DateField(null=True, blank=True)
