@@ -234,6 +234,159 @@
             stroke-linejoin: round;
         }
 
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: translateY(-20px);
+            animation: slideInUp 0.3s ease-out;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            padding: 5px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 100px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(0, 0, 0, 0.1);
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 0, 0, 0.15);
+            color: #333;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* Empty State */
         .empty-state {
             text-align: center;
@@ -388,7 +541,7 @@
     <div class="container">
         <!-- Header Section -->
         <div class="header">
-            <a href="{% url 'office_landing' %}" class="back-button">← Back to Portal</a>
+            <a href="{% url 'office_landing' %}" class="back-button">← Back to Dashboard</a>
             <div class="header-content">
                 <h1 class="brand-title">Store Directory</h1>
                 <p class="brand-subtitle">Manage Wholesale Store Relationships</p>
@@ -414,6 +567,7 @@
                             <th>Store #</th>
                             <th>Store Name</th>
                             <th>Username</th>
+                            <th>Contact</th>
                             <th>Email</th>
                             <th>Slots</th>
                             <th>Last Order</th>
@@ -438,6 +592,9 @@
                             <td data-label="Username">
                                 {{ store.username|default:"--" }}
                             </td>
+                            <td data-label="Contact">
+                                {{ store.contact_name|default:"John Doe" }}
+                            </td>
                             <td data-label="Email">
                                 {% if store.email %}
                                     <a href="mailto:{{ store.email }}" class="email-link">{{ store.email }}</a>
@@ -460,7 +617,13 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <button class="edit-btn" onclick="editStore('{{ store.id }}')">
+                                <button class="edit-btn" 
+                                        data-store-id="{{ store.id }}"
+                                        data-store-num="{{ store.store_number }}"
+                                        data-store-name="{{ store.name|default:'Unnamed Store'|escapejs }}"
+                                        data-store-email="{{ store.email|default:''}}"
+                                        data-store-slots="{{ store.slots|default:''}}"
+                                        data-contact-name="{{ store.contact_name|default:'John Doe'|escapejs }}">
                                     <svg viewBox="0 0 24 24">
                                         <path d="m18 2 4 4-12 12H6v-4L18 2z"/>
                                         <path d="m21.5 6.5-4-4"/>
@@ -481,11 +644,83 @@
         </div>
     </div>
 
-    <script>
+    <!-- Edit Store Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Store Information</h3>
+                <button class="close-btn" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form id="editStoreForm">
+                <div class="form-group">
+                    <label class="form-label" for="storeName">Store Name</label>
+                    <input type="text" id="storeName" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="contactName">Contact Name</label>
+                    <input type="text" id="contactName" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="storeEmail">Email</label>
+                    <input type="email" id="storeEmail" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="storeSlots">Slots</label>
+                    <input type="number" id="storeSlots" class="form-input" min="0">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script defer>
+        // Function declarations (hoisted)
+        function editStore(storeId, storeNum, storeName, storeEmail, storeSlots, contactName) {
+            currentStoreId = storeId;
+            currentStoreNum = storeNum;
+            
+            // Populate form fields with current values
+            document.getElementById('storeName').value = storeName || '';
+            document.getElementById('storeEmail').value = storeEmail || '';
+            document.getElementById('storeSlots').value = storeSlots || '';
+            document.getElementById('contactName').value = contactName || 'John Doe';
+            
+            // Show modal
+            document.getElementById('editModal').classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+            document.body.style.overflow = ''; // Restore scrolling
+            currentStoreId = null;
+            currentStoreNum = null;
+        }
+
+        // Variables
+        let currentStoreId = null;
+        let currentStoreNum = null;
+
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Store directory loaded');
             
-            // Add any interactive functionality here
+            // Handle edit button clicks using event delegation
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.edit-btn')) {
+                    const btn = e.target.closest('.edit-btn');
+                    const storeId = btn.dataset.storeId;
+                    const storeNum = btn.dataset.storeNum;
+                    const storeName = btn.dataset.storeName;
+                    const storeEmail = btn.dataset.storeEmail;
+                    const storeSlots = btn.dataset.storeSlots;
+                    const contactName = btn.dataset.contactName;
+                    
+                    editStore(storeId, storeNum, storeName, storeEmail, storeSlots, contactName);
+                }
+            });
             const rows = document.querySelectorAll('.stores-table tbody tr');
             rows.forEach(row => {
                 row.addEventListener('click', function() {
@@ -493,20 +728,175 @@
                     console.log('Store row clicked');
                 });
             });
+
+            // Close modal when clicking outside
+            document.getElementById('editModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeEditModal();
+                }
+            });
+
+            // Handle form submission
+            document.getElementById('editStoreForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveStoreChanges();
+            });
         });
 
-        function editStore(storeId) {
-            // Prevent event bubbling to avoid triggering row click
-            event.stopPropagation();
+        function saveStoreChanges() {
+            const formData = {
+                id: currentStoreId,
+                name: document.getElementById('storeName').value,
+                email: document.getElementById('storeEmail').value,
+                slots: document.getElementById('storeSlots').value,
+                contact_name: document.getElementById('contactName').value
+            };
+
+            console.log('Saving store changes:', formData);
+            console.log('Store ID:', currentStoreId);
+            console.log('Store Number:', currentStoreNum);
             
-            // Add your edit functionality here
-            console.log('Edit store:', storeId);
+            // Use store_number if available, otherwise fall back to ID
+            const storeIdentifier = currentStoreNum || currentStoreId;
             
-            // Example: redirect to edit page
-            // window.location.href = `/stores/${storeId}/edit/`;
+            // Convert to integer since Django URL expects <int:store_num>
+            const storeNum = parseInt(storeIdentifier);
+            const updateUrl = `/accounts/${storeNum}/update/`;
             
-            // Or: open a modal
-            // openEditModal(storeId);
+            console.log('Using identifier:', storeIdentifier);
+            console.log('Converted to int:', storeNum);
+            console.log('Final URL:', updateUrl);
+
+            // Send data to Django backend
+            fetch(updateUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'), // Django CSRF token
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
+                // For 500 errors, try to get the error text
+                if (response.status === 500) {
+                    return response.text().then(text => {
+                        console.log('Server error response:', text);
+                        throw new Error(`Server error (500): Check Django logs for details`);
+                    });
+                }
+                
+                // Check if response is ok
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                // Try to parse as JSON
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                
+                if (data.success) {
+                    // Update the table row with new data
+                    updateTableRow(formData);
+                    closeEditModal();
+                    
+                    // Show success message (optional)
+                    showNotification('Store updated successfully!', 'success');
+                } else {
+                    console.error('Server returned error:', data.error);
+                    alert('Error saving changes: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Full error object:', error);
+                console.error('Error message:', error.message);
+                console.error('Error stack:', error.stack);
+                alert('An error occurred while saving changes: ' + error.message);
+            });
+        }
+
+        function updateTableRow(data) {
+            // Find the table row for this store and update it
+            const rows = document.querySelectorAll('.stores-table tbody tr');
+            rows.forEach(row => {
+                const editBtn = row.querySelector('.edit-btn');
+                // Check if this is the correct row by comparing store ID
+                if (editBtn && editBtn.dataset.storeId === data.id) {
+                    // Update the row data
+                    const cells = row.querySelectorAll('td');
+                    cells[1].querySelector('.store-name').textContent = data.name || 'Unnamed Store';
+                    cells[3].textContent = data.contact_name || 'John Doe';
+                    
+                    // Update email cell
+                    if (data.email) {
+                        cells[4].innerHTML = `<a href="mailto:${data.email}" class="email-link">${data.email}</a>`;
+                    } else {
+                        cells[4].innerHTML = '<span style="color: #999;">--</span>';
+                    }
+                    
+                    // Update slots cell
+                    if (data.slots) {
+                        cells[5].innerHTML = `<strong>${data.slots}</strong>`;
+                    } else {
+                        cells[5].innerHTML = '<span style="color: #999;">--</span>';
+                    }
+
+                    // Update the data attributes with new values
+                    editBtn.dataset.storeId = data.id;
+                    editBtn.dataset.storeNum = currentStoreNum; // Keep the same store number
+                    editBtn.dataset.storeName = data.name;
+                    editBtn.dataset.storeEmail = data.email;
+                    editBtn.dataset.storeSlots = data.slots;
+                    editBtn.dataset.contactName = data.contact_name;
+                }
+            });
+        }
+
+        // Helper function to get Django CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            console.log(`Cookie ${name}:`, cookieValue); // Debug logging
+            return cookieValue;
+        }
+
+        // Optional: Show notification messages
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 9999;
+                animation: slideInRight 0.3s ease-out;
+                background: ${type === 'success' ? 'linear-gradient(135deg, #10ac84, #01a3a4)' : 'linear-gradient(135deg, #ee5a24, #ff6b6b)'};
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease-in';
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 3000);
         }
     </script>
 </body>

@@ -16,6 +16,9 @@ from django.utils import timezone
 from django.conf import settings
 from django.db.models import Sum
 import pytz
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+from django.shortcuts import get_object_or_404
 
 class CustomLogoutView(LogoutView):
     next_page = 'login'
@@ -203,3 +206,40 @@ def view_stores(request):
     context = {'stores': stores}
     
     return render(request, 'stores/view_stores.html', context)
+
+
+@require_http_methods(["POST"])
+def update_store(request, store_num):
+    print(f"Updating store with number: {store_num}")
+    try:
+        # Get the store object
+        store = get_object_or_404(Store, store_number=store_num)
+        
+        # Parse the JSON data from the request
+        data = json.loads(request.body)
+        
+        # Update the store fields
+        if 'name' in data:
+            store.name = data['name']
+        if 'email' in data:
+            store.email = data['email']
+        if 'slots' in data:
+            store.slots = int(data['slots']) if data['slots'] else None
+        if 'contact_name' in data:
+            store.contact_name = data['contact_name']
+        
+        # Save the changes to the database
+        store.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Store updated successfully'
+        })
+        
+    except Exception as e:
+        # Log the error for debugging
+        print(f"Error in update_store: {e}")
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)

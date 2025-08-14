@@ -7,4 +7,5 @@ urlpatterns = [
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', views.CustomLogoutView.as_view(), name='logout'),
     path('<str:store_name>/', views.dashboard, name='dashboard'),
+    path('<int:store_num>/update/', views.update_store, name='update_store'),
 ]
