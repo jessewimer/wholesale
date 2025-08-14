@@ -1,7 +1,7 @@
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.shortcuts import render
-from .decorators import brian_login_required
+from .decorators import brian_login_required, login_required
 from django.http import JsonResponse
 # change to Variety in production
 from products.models import Product
@@ -63,6 +63,24 @@ def view_variety(request):
     
     return render(request, 'office/view_variety.html', context)
 
+
+
+@login_required
+def analytics(request):
+    """
+    View for displaying analytics and business performance metrics
+    """
+    context = {
+        'page_title': 'Analytics Dashboard',
+        # Add any data you want to pass to the template
+        # For example:
+        # 'sales_data': get_sales_data(),
+        # 'inventory_metrics': get_inventory_metrics(),
+        # 'popular_products': get_popular_products(),
+    }
+    
+    # Render the template from the products app
+    return render(request, 'products/analytics.html', context)
 
 # JSON API endpoints
 @brian_login_required

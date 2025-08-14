@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Process Orders - Uprising Seeds</title>
+    <!-- You can add the same styling as your other pages here -->
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Process Orders</h1>
+            <p>Manage wholesale orders and fulfillment</p>
+            <a href="{% url 'office_landing' %}">← Back to Portal</a>
+        </div>
+        
+        <div class="content">
+            <h2>Pending Orders ({{ total_pending }})</h2>
+            <p>Total Packets: {{ total_packets }}</p>
+            
+            {% for order in pending_orders %}
+            <div class="order-card">
+                <h3>{{ order.order_id }}</h3>
+                <p>Store: {{ order.store_name }}</p>
+                <p>Date: {{ order.date }}</p>
+                <p>Packets: {{ order.total_packets }}</p>
+                <p>Status: {{ order.status }}</p>
+            </div>
+            {% endfor %}
+            
+            <p><em>Order processing functionality coming soon...</em></p>
+        </div>
+    </div>
+</body>
+</html>

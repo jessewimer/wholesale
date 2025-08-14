@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Uprising Seeds</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 20px 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Section */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            animation: fadeInUp 0.4s ease-out;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-content {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .brand-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .brand-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .back-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Analytics Cards Grid */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .analytics-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .analytics-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .card-content {
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #666;
+        }
+
+        .placeholder-text {
+            font-size: 1.1rem;
+            color: #888;
+            font-style: italic;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .metric-label {
+            font-size: 1rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Chart placeholder styling */
+        .chart-placeholder {
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #dee2e6;
+            margin-bottom: 15px;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: end;
+            gap: 8px;
+            height: 80px;
+        }
+
+        .bar {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 4px 4px 0 0;
+            width: 20px;
+            opacity: 0.7;
+        }
+
+        .bar:nth-child(1) { height: 60%; }
+        .bar:nth-child(2) { height: 80%; }
+        .bar:nth-child(3) { height: 45%; }
+        .bar:nth-child(4) { height: 70%; }
+        .bar:nth-child(5) { height: 90%; }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 100%;
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 25px 20px;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .brand-title {
+                font-size: 2rem;
+            }
+
+            .analytics-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .analytics-card {
+                padding: 25px 20px;
+            }
+
+            .card-content {
+                min-height: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 20px 15px;
+            }
+
+            .brand-title {
+                font-size: 1.8rem;
+            }
+
+            .analytics-card {
+                padding: 20px 15px;
+            }
+
+            .card-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+            }
+
+            .card-title {
+                font-size: 1.3rem;
+            }
+
+            .metric-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <a href="{% url 'office_landing' %}" class="back-button">← Back to Portal</a>
+            <div class="header-content">
+                <h1 class="brand-title">Analytics Dashboard</h1>
+                <p class="brand-subtitle">Sales Reports & Business Performance</p>
+            </div>
+            <div style="width: 140px;"></div> <!-- Spacer for centering -->
+        </div>
+
+        <!-- Analytics Cards Grid -->
+        <div class="analytics-grid">
+            <!-- Top Sellers Card -->
+            <div class="analytics-card">
+                <div class="card-header">
+                    <div class="card-icon">🏆</div>
+                    <h3 class="card-title">Top Sellers</h3>
+                </div>
+                <div class="card-content">
+                    <div class="chart-placeholder">
+                        <div class="chart-bars">
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                        </div>
+                    </div>
+                    <p class="placeholder-text">Best selling seed varieties will appear here</p>
+                </div>
+            </div>
+
+            <!-- Stores vs Wholesale Revenue Card -->
+            <div class="analytics-card">
+                <div class="card-header">
+                    <div class="card-icon">💰</div>
+                    <h3 class="card-title">Stores vs Wholesale $</h3>
+                </div>
+                <div class="card-content">
+                    <div class="metric-value">$12,350</div>
+                    <div class="metric-label">Total Revenue</div>
+                    <div style="margin-top: 20px;">
+                        <p class="placeholder-text">Revenue breakdown coming soon</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stores vs Wholesale Packets Card -->
+            <div class="analytics-card">
+                <div class="card-header">
+                    <div class="card-icon">📦</div>
+                    <h3 class="card-title">Stores vs Wholesale Packets</h3>
+                </div>
+                <div class="card-content">
+                    <div class="metric-value">2,847</div>
+                    <div class="metric-label">Total Packets Sold</div>
+                    <div style="margin-top: 20px;">
+                        <p class="placeholder-text">Packet distribution data coming soon</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dummy Analytics Card -->
+            <div class="analytics-card">
+                <div class="card-header">
+                    <div class="card-icon">📈</div>
+                    <h3 class="card-title">Growth Metrics</h3>
+                </div>
+                <div class="card-content">
+                    <div class="chart-placeholder">
+                        <p style="color: #999; font-size: 1rem;">Chart Coming Soon</p>
+                    </div>
+                    <p class="placeholder-text">Monthly growth trends and forecasts</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add any interactive functionality here
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Analytics dashboard loaded');
+        });
+    </script>
+</body>
+</html>

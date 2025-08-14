@@ -16,9 +16,12 @@
 #     path('inventory-germination/<str:crop>/', products_by_crop_json, name='products_by_crop_json'),
 # ]
 from django.urls import path
-from .views import OfficeLoginView, OfficeLogoutView, office_dashboard, office_landing, view_variety
+from .views import OfficeLoginView, OfficeLogoutView, office_landing, view_variety, analytics
 from .views import varieties_json, inventory_germination, crops_json, products_by_crop_json
 import products.views as product_views
+import stores.views as store_views
+import lots.views as lot_views
+import orders.views as order_views
 
 urlpatterns = [
     # Authentication
@@ -33,7 +36,13 @@ urlpatterns = [
     path('edit-products/', product_views.edit_products, name='edit_products'),
     path('view-variety/', view_variety, name='view_variety'),  # New view
     path('inventory/', inventory_germination, name='inventory'),  # Updated name to match landing page
+    path('analytics/', analytics, name='analytics'),
+    path('process-store-orders/', store_views.process_store_orders, name='process_store_orders'),
+    path('view-stores/', store_views.view_stores, name='view_stores'),
     
+    path('send-germ-samples/', lot_views.send_germ_samples, name='send_germ_samples'),
+    path('inventory/', lot_views.inventory, name='inventory'),
+    path('process-online-orders/', order_views.process_online_orders, name='process_online_orders'),
     # Keep your existing inventory page with original name for backward compatibility
     path('inventory-germination/', inventory_germination, name='inventory_germination'),
     

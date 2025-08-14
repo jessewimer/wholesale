@@ -17,7 +17,9 @@ from django.conf import settings
 
 
 
+def process_online_orders(request):
 
+    return JsonResponse({'status': 'success calling process_online_orders'})
 
 def get_order_id_by_number(request, order_number):
     """
@@ -194,3 +196,4 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Order.objects.filter(pulled_for_processing=False)
+    

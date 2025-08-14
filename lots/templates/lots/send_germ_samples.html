@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Germination Samples - Uprising Seeds</title>
+    <!-- Add your styling here -->
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Send Germination Samples</h1>
+            <p>Manage germination testing sample requests</p>
+            <a href="{% url 'office_portal' %}">← Back to Portal</a>
+        </div>
+        
+        <div class="content">
+            <h2>Sample Requests</h2>
+            <p>Pending: {{ total_pending }} | Sent: {{ total_sent }}</p>
+            
+            {% for sample in pending_samples %}
+            <div class="sample-card">
+                <h3>{{ sample.sample_id }}</h3>
+                <p>Variety: {{ sample.variety }}</p>
+                <p>Batch: {{ sample.batch }}</p>
+                <p>Requested: {{ sample.requested_date }}</p>
+                <p>Status: {{ sample.status }}</p>
+            </div>
+            {% endfor %}
+            
+            <p><em>Sample management functionality coming soon...</em></p>
+        </div>
+    </div>
+</body>
+</html>

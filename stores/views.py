@@ -161,3 +161,45 @@ def dashboard(request, store_name):
         'product_dict_json': product_dict_json,
     }
     return render(request, 'stores/dashboard.html', context)
+
+
+@login_required
+def process_store_orders(request):
+    """
+    View for processing wholesale orders
+    """
+    context = {
+        'page_title': 'Process Orders',
+        # Add placeholder data - replace with real data later
+        'pending_orders': [
+            {
+                'order_id': 'WO-2024-001',
+                'store_name': 'Green Thumb Garden Center',
+                'date': '2024-08-10',
+                'total_packets': 150,
+                'status': 'pending'
+            },
+            {
+                'order_id': 'WO-2024-002', 
+                'store_name': 'Urban Seeds Co.',
+                'date': '2024-08-12',
+                'total_packets': 75,
+                'status': 'processing'
+            },
+        ],
+        'total_pending': 2,
+        'total_packets': 225,
+    }
+    
+    return render(request, 'stores/store_orders.html', context)
+
+@login_required
+def view_stores(request):
+    """
+    View for displaying all store locations and their details
+    """
+    # fetch all store objects from the database, excluding ones whose name attribute start with "PCC"
+    stores = Store.objects.exclude(name__startswith="PCC")
+    context = {'stores': stores}
+    
+    return render(request, 'stores/view_stores.html', context)

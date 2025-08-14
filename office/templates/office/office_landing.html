@@ -23,7 +23,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             width: 100%;
             margin: 0 auto;
             padding: 20px;
@@ -67,8 +67,8 @@
         /* Action Cards Section */
         .actions-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
             animation: fadeInUp 0.6s ease-out;
         }
 
@@ -84,6 +84,8 @@
             transition: all 0.3s ease;
             text-decoration: none;
             color: inherit;
+            min-width: 0;
+            width: 100%;
         }
 
         .action-card:hover {
@@ -94,10 +96,8 @@
         .action-icon {
             font-size: 3rem;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             line-height: 1;
+            transition: transform 0.3s ease;
         }
 
         .action-title {
@@ -105,6 +105,14 @@
             font-weight: 600;
             color: #333;
             margin-bottom: 12px;
+            transition: all 0.3s ease;
+            word-wrap: break-word;
+            hyphens: auto;
+            line-height: 1.3;
+            min-height: 3.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .action-description {
@@ -112,25 +120,203 @@
             color: #666;
             line-height: 1.5;
             font-weight: 400;
+            transition: all 0.3s ease;
         }
 
-        /* Specific card styling - all turn green on hover */
-        .edit-products-card:hover .action-icon {
-            background: linear-gradient(135deg, #26de81, #20bf6b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        /* Hover effects - scale up icon and brighten text */
+        .action-card:hover .action-icon {
+            transform: scale(1.1);
         }
 
-        .view-variety-card:hover .action-icon {
-            background: linear-gradient(135deg, #26de81, #20bf6b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .action-card:hover .action-title {
+            color: #26de81;
+            transform: scale(1.05);
         }
 
-        .inventory-card:hover .action-icon {
-            background: linear-gradient(135deg, #26de81, #20bf6b);
+        .action-card:hover .action-description {
+            color: #555;
+        }
+
+        /* Inventory Menu Modal */
+        .inventory-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .inventory-menu-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .inventory-menu-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #333;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .inventory-menu-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .inventory-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .inventory-option {
+            padding: 20px 25px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 15px;
+            text-decoration: none;
+            color: #333;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .inventory-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+            background: rgba(255, 255, 255, 1);
+            border-color: #26de81;
+        }
+
+        .inventory-option-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            text-align: center;
+        }
+
+        .inventory-option-text {
+            flex-grow: 1;
+        }
+
+        /* Wholesale Menu Modal */
+        .wholesale-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .wholesale-menu-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .wholesale-menu-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #333;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wholesale-menu-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .wholesale-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .wholesale-option {
+            padding: 20px 25px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 15px;
+            text-decoration: none;
+            color: #333;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .wholesale-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+            background: rgba(255, 255, 255, 1);
+            border-color: #26de81;
+        }
+
+        .wholesale-option-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            text-align: center;
+        }
+
+        .wholesale-option-text {
+            flex-grow: 1;
         }
 
         /* Footer Section */
@@ -181,6 +367,20 @@
         }
 
         /* Responsive design */
+        @media (max-width: 1200px) {
+            .actions-container {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .actions-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -345,12 +545,12 @@
 
         <!-- Action Cards Section -->
         <div class="actions-container">
-            <!-- Edit Store Products Card -->
-            <a href="{% url 'edit_products' %}" class="action-card edit-products-card">
-                <div class="action-icon">🛠️</div>
-                <h3 class="action-title">Edit Store Products</h3>
-                <p class="action-description">Manage product availability for each store location</p>
-            </a>
+            <!-- Wholesale Card -->
+            <div class="action-card wholesale-card" onclick="showWholesaleMenu()">
+                <div class="action-icon">🛒</div>
+                <h3 class="action-title">Wholesale</h3>
+                <p class="action-description">Manage wholesale operations and store products</p>
+            </div>
 
             <!-- View Variety Card -->
             <a href="{% url 'view_variety' %}" class="action-card view-variety-card">
@@ -360,10 +560,24 @@
             </a>
 
             <!-- Inventory/Germination Card -->
-            <a href="{% url 'inventory' %}" class="action-card inventory-card">
-                <div class="action-icon">📊</div>
+            <div class="action-card inventory-card" onclick="showInventoryMenu()">
+                <div class="action-icon">🌰</div>
                 <h3 class="action-title">Inventory & Germination</h3>
                 <p class="action-description">Track inventory levels and germination data</p>
+            </div>
+
+            <!-- Analytics Card -->
+            <a href="{% url 'analytics' %}" class="action-card analytics-card">
+                <div class="action-icon">📊</div>
+                <h3 class="action-title">Analytics</h3>
+                <p class="action-description">View sales reports and business performance metrics</p>
+            </a>
+
+            <!-- Processing Online Orders Card -->
+            <a href="{% url 'process_online_orders' %}" class="action-card online-orders-card">
+                <div class="action-icon">🖥️</div>
+                <h3 class="action-title">Process Online Orders</h3>
+                <p class="action-description">Manage and fulfill online customer orders</p>
             </a>
         </div>
 
@@ -372,6 +586,46 @@
             <button class="logout-button" onclick="showLogoutVerification()">
                 Logout
             </button>
+        </div>
+    </div>
+
+    <!-- Inventory Menu Modal -->
+    <div class="inventory-modal" id="inventoryMenu">
+        <div class="inventory-menu-content">
+            <button class="inventory-menu-close" onclick="closeInventoryMenu()">&times;</button>
+            <h2 class="inventory-menu-title">Inventory & Germination</h2>
+            <div class="inventory-options">
+                <a href="{% url 'send_germ_samples' %}" class="inventory-option">
+                    <div class="inventory-option-icon">🧪</div>
+                    <div class="inventory-option-text">Send Germ Samples</div>
+                </a>
+                <a href="{% url 'inventory' %}" class="inventory-option">
+                    <div class="inventory-option-icon">📋</div>
+                    <div class="inventory-option-text">View Germination/Inv Data</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wholesale Menu Modal -->
+    <div class="wholesale-modal" id="wholesaleMenu">
+        <div class="wholesale-menu-content">
+            <button class="wholesale-menu-close" onclick="closeWholesaleMenu()">&times;</button>
+            <h2 class="wholesale-menu-title">Wholesale Options</h2>
+            <div class="wholesale-options">
+                <a href="{% url 'process_store_orders' %}" class="wholesale-option">
+                    <div class="wholesale-option-icon">📋</div>
+                    <div class="wholesale-option-text">Process Store Orders</div>
+                </a>
+                <a href="{% url 'edit_products' %}" class="wholesale-option">
+                    <div class="wholesale-option-icon">🛠️</div>
+                    <div class="wholesale-option-text">Edit Store Products</div>
+                </a>
+                <a href="{% url 'view_stores' %}" class="wholesale-option">
+                    <div class="wholesale-option-icon">🏪</div>
+                    <div class="wholesale-option-text">View Stores</div>
+                </a>
+            </div>
         </div>
     </div>
 
@@ -406,6 +660,30 @@
                 }
             }
             return cookieValue;
+        }
+
+        // Function to show inventory menu
+        function showInventoryMenu() {
+            const modal = document.getElementById('inventoryMenu');
+            modal.style.display = 'flex';
+        }
+
+        // Function to close inventory menu
+        function closeInventoryMenu() {
+            const modal = document.getElementById('inventoryMenu');
+            modal.style.display = 'none';
+        }
+
+        // Function to show wholesale menu
+        function showWholesaleMenu() {
+            const modal = document.getElementById('wholesaleMenu');
+            modal.style.display = 'flex';
+        }
+
+        // Function to close wholesale menu
+        function closeWholesaleMenu() {
+            const modal = document.getElementById('wholesaleMenu');
+            modal.style.display = 'none';
         }
 
         // Function to show logout verification
@@ -476,9 +754,14 @@
 
             // Close modal when clicking outside
             document.addEventListener('click', function(event) {
-                const modal = document.getElementById('verifyLogout');
-                if (event.target === modal) {
+                const logoutModal = document.getElementById('verifyLogout');
+                const wholesaleModal = document.getElementById('wholesaleMenu');
+                
+                if (event.target === logoutModal) {
                     closeModal();
+                }
+                if (event.target === wholesaleModal) {
+                    closeWholesaleMenu();
                 }
             });
 
@@ -486,6 +769,7 @@
             document.addEventListener('keydown', function(event) {
                 if (event.key === 'Escape') {
                     closeModal();
+                    closeWholesaleMenu();
                 }
             });
         });

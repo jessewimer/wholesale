@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Stores - Uprising Seeds</title>
+    <!-- You can add the same styling as your other pages here -->
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>View Stores</h1>
+            <p>Manage wholesale store relationships</p>
+            <a href="{% url 'office_landing' %}">← Back to Portal</a>
+        </div>
+        
+        <div class="content">
+            <h2>Store Directory</h2>
+            <p>Total Stores: {{ total_stores }} | Active: {{ active_stores }}</p>
+            
+            {% for store in stores %}
+            <div class="store-card">
+                <h3>{{ store.name }}</h3>
+                <p>Location: {{ store.location }}</p>
+                <p>Contact: {{ store.contact }}</p>
+                <p>Phone: {{ store.phone }}</p>
+                <p>Status: {{ store.status }}</p>
+                <p>Last Order: {{ store.last_order }}</p>
+            </div>
+            {% endfor %}
+            
+            <p><em>Store management functionality coming soon...</em></p>
+        </div>
+    </div>
+</body>
+</html>
