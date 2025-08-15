@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from .serializers import OrderSerializer
 from django.http import HttpResponse, Http404
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -17,7 +17,11 @@ from django.conf import settings
 
 
 
+
 def process_online_orders(request):
+
+    context = {}
+    return render(request, 'orders/process_online_orders.html', context)
 
     return JsonResponse({'status': 'success calling process_online_orders'})
 

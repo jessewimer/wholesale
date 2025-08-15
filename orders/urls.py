@@ -12,4 +12,5 @@ urlpatterns = [
     path('api/get-order-id/<str:order_number>/', views.get_order_id_by_number, name='get_order_id'),
     path('generate-pdf/<int:order_id>/', views.generate_order_pdf, name='generate_order_pdf'),
     path('api/', include(router.urls)),
+    # path('process-online-orders/', views.process_online_orders, name='process_online_orders'),
 ]

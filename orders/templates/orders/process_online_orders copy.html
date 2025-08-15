@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Process Online Orders - Uprising Seeds</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 20px 0;
+        }
+
+        .container {
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Section */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            animation: fadeInUp 0.4s ease-out;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-content {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .brand-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .brand-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .back-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        /* File Upload Section */
+        .upload-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .upload-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .file-drop-zone {
+            border: 3px dashed #667eea;
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            background: rgba(102, 126, 234, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .file-drop-zone.dragover {
+            border-color: #764ba2;
+            background: rgba(102, 126, 234, 0.1);
+            transform: scale(1.02);
+        }
+
+        .file-drop-zone.has-file {
+            border-color: #10ac84;
+            background: rgba(16, 172, 132, 0.1);
+            padding: 20px;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .file-info {
+            display: none;
+            align-items: center;
+            gap: 15px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+
+        .file-info.visible {
+            display: flex;
+        }
+
+        .file-icon {
+            font-size: 2rem;
+            color: #10ac84;
+        }
+
+        .file-details {
+            flex-grow: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .file-size {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .remove-file-btn {
+            background: #ee5a24;
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .remove-file-btn:hover {
+            background: #ff6b6b;
+            transform: scale(1.1);
+        }
+
+        .process-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #10ac84, #01a3a4);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .process-btn.visible {
+            display: block;
+        }
+
+        .process-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 172, 132, 0.3);
+        }
+
+        .process-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Dual Tables Section */
+        .tables-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .table-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .table-count {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Print Controls */
+        .print-controls {
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .print-controls-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 12px;
+        }
+
+        .print-range {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .print-range label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .range-input {
+            width: 80px;
+            padding: 8px 12px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-align: center;
+            transition: border-color 0.3s ease;
+        }
+
+        .range-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .print-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: auto;
+        }
+
+        .print-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .print-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Item Lists */
+        .item-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            background: white;
+        }
+
+        .item {
+            padding: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .item:hover {
+            background: rgba(102, 126, 234, 0.05);
+            transform: translateX(2px);
+        }
+
+        .item:last-child {
+            border-bottom: none;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
+            flex-grow: 1;
+        }
+
+        .item-quantity {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+
+        .empty-state-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            margin: 20px auto;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(102, 126, 234, 0.2);
+            border-left: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-spinner.visible {
+            display: block;
+        }
+
+        /* Status Messages */
+        .status-message {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-message.success {
+            background: rgba(16, 172, 132, 0.1);
+            color: #10ac84;
+            border: 1px solid rgba(16, 172, 132, 0.2);
+        }
+
+        .status-message.error {
+            background: rgba(238, 90, 36, 0.1);
+            color: #ee5a24;
+            border: 1px solid rgba(238, 90, 36, 0.2);
+        }
+
+        .status-message.visible {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        /* Animations */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .tables-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 25px 20px;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .back-button {
+                align-self: flex-start;
+            }
+
+            .brand-title {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .upload-section,
+            .table-container {
+                padding: 20px;
+            }
+
+            .print-range {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .range-input {
+                width: 100%;
+            }
+
+            .print-btn {
+                margin-left: 0;
+            }
+
+            .file-info {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <a href="/office/dashboard" class="back-button">
+                <span>← Back to Portal</span>
+            </a>
+            <div class="header-content">
+                <h1 class="brand-title">Process Online Orders</h1>
+                <p class="brand-subtitle">Upload CSV & Generate Order PDFs</p>
+            </div>
+            <div style="width: 140px;"></div> <!-- Spacer for centering -->
+        </div>
+
+        <!-- File Upload Section -->
+        <div class="upload-section">
+            <h2 class="upload-title">Upload Orders CSV File</h2>
+            
+            <div class="file-drop-zone" id="dropZone">
+                <div class="upload-icon">📄</div>
+                <div class="upload-text">Drag & drop your CSV file here</div>
+                <div class="upload-subtext">or click to browse files</div>
+            </div>
+
+            <div class="file-info" id="fileInfo">
+                <div class="file-icon">📄</div>
+                <div class="file-details">
+                    <div class="file-name" id="fileName"></div>
+                    <div class="file-size" id="fileSize"></div>
+                </div>
+                <button class="remove-file-btn" id="removeFile" title="Remove file">🗑️</button>
+            </div>
+
+            <input type="file" id="fileInput" accept=".csv" style="display: none;">
+            
+            <div class="status-message" id="statusMessage"></div>
+            
+            <button class="process-btn" id="processBtn">
+                <span id="processBtnText">Process Orders</span>
+            </button>
+
+            <div class="loading-spinner" id="loadingSpinner"></div>
+        </div>
+
+        <!-- Dual Tables Section -->
+        <div class="tables-section">
+            <!-- Bulk Items to Print -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3 class="table-title">Bulk Items to Print</h3>
+                    <div class="table-count" id="printItemsCount">0 items</div>
+                </div>
+
+                <div class="print-controls">
+                    <div class="print-controls-title">Print Range Selection</div>
+                    <div class="print-range">
+                        <label>From:</label>
+                        <input type="number" class="range-input" id="startRange" placeholder="1" min="1">
+                        <label>To:</label>
+                        <input type="number" class="range-input" id="endRange" placeholder="End" min="1">
+                        <button class="print-btn" id="printRangeBtn" disabled>Generate PDF</button>
+                    </div>
+                </div>
+
+                <div class="item-list" id="printItemsList">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <div class="empty-state-text">No items to print yet</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pre-packed Items to Pull -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3 class="table-title">Pre-packed Items to Pull</h3>
+                    <div class="table-count" id="pullItemsCount">0 items</div>
+                </div>
+
+                <div class="item-list" id="pullItemsList">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📦</div>
+                        <div class="empty-state-text">No items to pull yet</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentFile = null;
+        let printItems = [];
+        let pullItems = [];
+
+        // DOM elements
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const removeFileBtn = document.getElementById('removeFile');
+        const processBtn = document.getElementById('processBtn');
+        const processBtnText = document.getElementById('processBtnText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const statusMessage = document.getElementById('statusMessage');
+        const startRange = document.getElementById('startRange');
+        const endRange = document.getElementById('endRange');
+        const printRangeBtn = document.getElementById('printRangeBtn');
+
+        // Initialize drag and drop functionality
+        function initializeDragDrop() {
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+
+            // Highlight drop zone when item is dragged over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+
+            // Handle dropped files
+            dropZone.addEventListener('drop', handleDrop, false);
+            
+            // Handle click to browse
+            dropZone.addEventListener('click', () => {
+                if (!dropZone.classList.contains('has-file')) {
+                    fileInput.click();
+                }
+            });
+            
+            // Handle file input change
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            // Handle remove file button
+            removeFileBtn.addEventListener('click', removeFile);
+            
+            // Handle process button
+            processBtn.addEventListener('click', processFile);
+
+            // Handle range inputs and print button
+            startRange.addEventListener('input', validateRange);
+            endRange.addEventListener('input', validateRange);
+            printRangeBtn.addEventListener('click', printRange);
+        }
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function highlight() {
+            if (!dropZone.classList.contains('has-file')) {
+                dropZone.classList.add('dragover');
+            }
+        }
+
+        function unhighlight() {
+            dropZone.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                
+                // Check if it's a CSV file
+                if (file.type !== 'text/csv' && !file.name.toLowerCase().endsWith('.csv')) {
+                    showStatusMessage('Please upload a CSV file only.', 'error');
+                    return;
+                }
+                
+                currentFile = file;
+                displayFileInfo(file);
+                hideStatusMessage();
+            }
+        }
+
+        function displayFileInfo(file) {
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            
+            dropZone.classList.add('has-file');
+            fileInfo.classList.add('visible');
+            processBtn.classList.add('visible');
+        }
+
+        function removeFile() {
+            currentFile = null;
+            fileInput.value = '';
+            
+            dropZone.classList.remove('has-file');
+            fileInfo.classList.remove('visible');
+            processBtn.classList.remove('visible');
+            
+            hideStatusMessage();
+            clearTables();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function processFile() {
+            if (!currentFile) return;
+
+            // Show loading state
+            processBtn.disabled = true;
+            processBtnText.textContent = 'Processing...';
+            loadingSpinner.classList.add('visible');
+            hideStatusMessage();
+
+            // Create FormData to send file
+            const formData = new FormData();
+            formData.append('csv_file', currentFile);
+
+            // Send to Django backend
+            fetch('/office/process-orders/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Update the tables with returned data
+                    updatePrintItems(data.print_items || []);
+                    updatePullItems(data.pull_items || []);
+                    
+                    showStatusMessage(`Orders processed successfully! Found ${data.print_items?.length || 0} items to print and ${data.pull_items?.length || 0} items to pull.`, 'success');
+                } else {
+                    throw new Error(data.error || 'Unknown error occurred');
+                }
+            })
+            .catch(error => {
+                console.error('Error processing file:', error);
+                showStatusMessage('Error processing file: ' + error.message, 'error');
+            })
+            .finally(() => {
+                // Reset loading state
+                processBtn.disabled = false;
+                processBtnText.textContent = 'Process Orders';
+                loadingSpinner.classList.remove('visible');
+            });
+        }
+
+        function updatePrintItems(items) {
+            printItems = items;
+            const printItemsList = document.getElementById('printItemsList');
+            const printItemsCount = document.getElementById('printItemsCount');
+
+            printItemsCount.textContent = `${items.length} items`;
+
+            if (items.length === 0) {
+                printItemsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <div class="empty-state-text">No items to print</div>
+                    </div>
+                `;
+                printRangeBtn.disabled = true;
+                return;
+            }
+
+            // Populate the list
+            printItemsList.innerHTML = items.map((item, index) => `
+                <div class="item">
+                    <span class="item-name">${index + 1}. ${escapeHtml(item.name)}</span>
+                    <span class="item-quantity">${item.quantity}</span>
+                </div>
+            `).join('');
+
+            // Enable print controls
+            startRange.max = items.length;
+            endRange.max = items.length;
+            endRange.value = items.length;
+            startRange.value = 1;
+            validateRange();
+        }
+
+        function updatePullItems(items) {
+            pullItems = items;
+            const pullItemsList = document.getElementById('pullItemsList');
+            const pullItemsCount = document.getElementById('pullItemsCount');
+
+            pullItemsCount.textContent = `${items.length} items`;
+
+            if (items.length === 0) {
+                pullItemsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📦</div>
+                        <div class="empty-state-text">No items to pull</div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Populate the list
+            pullItemsList.innerHTML = items.map(item => `
+                <div class="item">
+                    <span class="item-name">${escapeHtml(item.name)}</span>
+                    <span class="item-quantity">${item.quantity}</span>
+                </div>
+            `).join('');
+        }
+
+        function validateRange() {
+            const start = parseInt(startRange.value) || 0;
+            const end = parseInt(endRange.value) || 0;
+
+            const isValid = start >= 1 && end >= start && end <= printItems.length && printItems.length > 0;
+            printRangeBtn.disabled = !isValid;
+        }
+
+        function printRange() {
+            const start = parseInt(startRange.value);
+            const end = parseInt(endRange.value);
+
+            if (!start || !end || start > end || start < 1 || end > printItems.length) {
+                showStatusMessage('Please enter a valid range.', 'error');
+                return;
+            }
+
+            // Show loading state on print button
+            printRangeBtn.disabled = true;
+            const originalText = printRangeBtn.textContent;
+            printRangeBtn.textContent = 'Generating...';
+
+            // Send print request to Django
+            fetch('/office/print-range/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify({
+                    start: start - 1, // Convert to 0-based index
+                    end: end - 1,
+                    items: printItems.slice(start - 1, end)
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // Download the PDF
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `bulk_orders_${start}-${end}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                showStatusMessage(`PDF generated successfully for items ${start}-${end}!`, 'success');
+            })
+            .catch(error => {
+                console.error('Error printing range:', error);
+                showStatusMessage('Error generating PDF: ' + error.message, 'error');
+            })
+            .finally(() => {
+                // Reset button state
+                printRangeBtn.disabled = false;
+                printRangeBtn.textContent = originalText;
+                validateRange(); // Re-validate to set correct state
+            });
+        }
+
+        function clearTables() {
+            updatePrintItems([]);
+            updatePullItems([]);
+        }
+
+        function showStatusMessage(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message ${type} visible`;
+        }
+
+        function hideStatusMessage() {
+            statusMessage.classList.remove('visible');
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Helper function to get Django CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Process Online Orders page loaded');
+            initializeDragDrop();
+        });
+
+    </script>
+</body>
+</html>
