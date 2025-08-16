@@ -16,14 +16,16 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
 
-
-
 def process_online_orders(request):
+    '''
+    Needs to grab previous batches of orders (limit 10) and display by the print date and pass as context
+    When one is selected, it needs to query the database for bulk to pull/print and update the displays
 
+    Needs to grab to print/pull from the most recent batch and auto populate the two displays
+    '''
     context = {}
     return render(request, 'orders/process_online_orders.html', context)
 
-    return JsonResponse({'status': 'success calling process_online_orders'})
 
 def get_order_id_by_number(request, order_number):
     """

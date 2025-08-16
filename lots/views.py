@@ -34,24 +34,7 @@ def send_germ_samples(request):
 # Update your existing process_orders and view_stores views if needed:
 @login_required
 def inventory(request):
-    context = {
-        'page_title': 'Inventory Management',
-        'inventory_items': [
-            {
-                'item_id': 'INV-2024-001',
-                'variety': 'Cherokee Purple Tomato',
-                'quantity': 100,
-                'status': 'in_stock'
-            },
-            {
-                'item_id': 'INV-2024-002',
-                'variety': 'Blue Kuri Squash',
-                'quantity': 50,
-                'status': 'low_stock'
-            },
-        ],
-        'total_items': 2,
-    }
+    context = {}
 
     # Point to lots app template if that's where it's located
     return render(request, 'lots/inventory.html', context)
